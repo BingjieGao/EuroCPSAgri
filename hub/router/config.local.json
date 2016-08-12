@@ -1,0 +1,27 @@
+{
+  "syncConfig": {
+    "syncType": "nqm-iot-http-sync",
+    "syncServer": "cmd.nqminds.com",
+    "syncPort": 443,
+    "path": "commandSync/dataset/data/feed",
+    "ssl": false,
+    "autoReconnectTimer": 5000,
+    "capability": "BJxDTAMqW",
+    "secret": "password"
+  },
+  "cacheConfig": {
+    "rootPath": "cache",
+    "transmitCheckFrequency": 10000,
+    "maximumTransmitKB": 250,
+    "transportTimeout": 600000,
+    "archive": true,
+    "pendingPacketThreshold": 1
+  },
+  "drivers": [
+    
+  ],
+  "moistureId":"H1xkhXW8K",
+  "typeId":"SkephVW8t",
+  "rateId":"HkxlPUZct",
+  "HumId":"SygcmLb5K"
+}

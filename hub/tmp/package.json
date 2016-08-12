@@ -1,0 +1,32 @@
+{
+  "name": "hub",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "bindings": "^1.2.1",
+    "body-parser": "^1.15.2",
+    "commander": "^2.9.0",
+    "debug": "^2.2.0",
+    "define-properties": "^1.1.2",
+    "ejs": "^2.5.1",
+    "es6-promise": "^3.2.1",
+    "express": "^4.14.0",
+    "foreach": "^2.0.5",
+    "function-bind": "^1.1.0",
+    "graceful-readlink": "^1.0.1",
+    "ms": "^0.7.1",
+    "nan": "^2.4.0",
+    "nqmFileCache": "git://github.com/nqminds/nqm-iot-file-cache.git",
+    "nqmHTTPSync": "git://github.com/nqminds/nqm-iot-http-sync.git",
+    "object-keys": "^1.0.11",
+    "object.assign": "^4.0.4",
+    "serialport": "^3.1.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

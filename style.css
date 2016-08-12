@@ -1,0 +1,23 @@
+body{
+
+}
+.container{
+	width:100%;
+	margin: 0 auto;
+	background-color: grey;
+}
+
+.main-visual{
+	width:5%;
+	float:left;
+	background-color:yellow;
+}
+
+.console{
+	width:20%;
+	float:left;
+	background-color: red;
+}
+.container:after{
+	clear:both;
+}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Grain Dryer</title>
+	<link rel="stylesheet" href="main.css">
+	<script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+	<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<!-- d3-tooltip script -->
+	<!--*****************************************************************************-->
+	<script src="plot.js"></script>
+
+
+</head>
+<body>
+	<div class="header">
+		Grain Dryer Monitor
+	</div>
+	<div class="container clearfix">
+		<div class="option-view">
+			
+		</div>
+		<!-- 
+		main bar chart for current data
+		-->
+		<div class="main-visual-active">
+			
+			<div class="bar-chart">
+				<div class="chart-header">Temperature Chart</div>
+				<div id="temp-svg" class="chart-svg"></div>
+			</div>
+		</div>
+	
+		<div class="main-visual-active clearfix">
+			<div class="bar-chart">
+				<div class="chart-header">Humidity Chart</div>
+				<div id="hum-svg" class="chart-svg"></div>
+			</div>
+		</div>
+		<!-- ********************************************************** -->
+	</div>
+	<div class="slider" id="time-bar"></div>
+</body>
+
+<script>
+	var TempData = <%-TempDatum%> 
+	var HumData = <%-HumDatum%>
+	/*
+	* function draw line graph
+	*/
+	var formatDate = d3.time.format("%c");
+	/*
+	* get JsonData from 
+	*/
+	for(var i=0;i<TempData.length;i++){
+		TempData[i].timestamp = new Date(TempData[i].timestamp);
+		for(var j=0;j<3;j++){
+			TempData[i].Temp_data[j]['timestamp'] = TempData[i].timestamp;
+			TempData[i].Temp_data[j]['Temp'] = +TempData[i].Temp_data[j]['Temp'];
+			TempData[i].Temp_data[j]['Hum'] = HumData[i].Hum_data[j]['Hum'];
+			TempData[i].Temp_data[j]['sensorId'] = +TempData[i].Temp_data[j]['sensorId'];
+		}
+	};
+	var dates = [];
+	TempData.forEach(function(d){
+		dates.push(d.timestamp);
+	});
+	var lastest = Math.max.apply(null,dates);
+
+	var dataObj = null;
+	TempData.forEach(function(d){
+		if(d.timestamp.getTime() == lastest){
+			dataObj = d;
+		}
+	})
+
+		$(document).ready(function(){
+			console.log($(window).width());
+			var width = $(window).width() * 0.49;
+			var slider_width = $(window).width() -30;
+			console.log(width);
+			
+			var margin = 60;
+			width = width-margin;
+			CreateBarChart(width,dataObj);
+			TimeLine(slider_width,TempData);
+		});
+	$( window ).resize(function() {
+		var width = $(window).width() * 0.49;
+		var slider_width = $(window).width() -30;
+		var margin = 60;
+		width = width-margin;
+		d3.selectAll('svg').remove();
+		CreateBarChart(width,dataObj);
+		TimeLine(slider_width,TempData);
+	})
+
+</script>
+<script>
+	var header = $('.header');
+	var offset = header.offset().top;
+	$(window).scroll(function(){
+		if($(window).scrollTop() > offset)
+			header.addClass('sticky-header');
+		else
+			header.removeClass('sticky-header');
+	});
+</script>
+
+</html>

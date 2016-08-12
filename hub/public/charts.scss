@@ -1,0 +1,55 @@
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+.temp-line,.hum-line{
+	opacity:0.7;
+}
+
+.brush .extent {
+  stroke: #fff;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+.y-lines{
+	stroke-opacity:0.7;
+	z-index:2;
+}
+.dot{
+	opacity:0.7;
+}
+.grid .tick {
+    stroke: lightgrey;
+    opacity: 0.7;
+}
+.label{
+	font-size: 1.1em;
+}
+.legend-box{
+	box-sizing: border-box;
+	border:1px solid grey;
+}
+.legend-disabled{
+	fill:rgba(254,254,254,0.2);
+	stroke-width:0.8px;
+	stroke:silver;
+}
+.chart-disabled{
+	display:none;
+}
+clippath{
+	background-color: white;
+}
+.clippath{
+	pointer-events:all;
+	fill: white;
+}
+g{
+	cursor:pointer;
+    pointer-events: all;
+}
+
+
+
+
