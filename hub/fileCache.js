@@ -297,8 +297,6 @@ module.exports = (function() {
 
   FileCache.prototype.saveTemp = function(dataIn){
     readFileLine(localDatapath,dataIn,function(datum){
-
-      //console.log('final result'+JSON.stringify(datum));
       fs.writeFile(localDatapath,JSON.stringify(datum),{ flag : 'w' },function(err){
         if(err)
           console.log(err);
@@ -308,8 +306,6 @@ module.exports = (function() {
 
   FileCache.prototype.saveHum = function(dataIn){
     readFileLine(localDatapath2,dataIn,function(datum){
-
-      //console.log('final result'+JSON.stringify(datum));
       fs.writeFile(localDatapath2,JSON.stringify(datum),{ flag : 'w' },function(err){
         if(err)
           console.log(err);

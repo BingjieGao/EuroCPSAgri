@@ -128,14 +128,12 @@ module.exports = (function(){
 		
 		var Temp_data = [];
 		var Hum_data = [];
-		var emit_TempData = null;
-		var emit_HumData = {};
 
 		data_array = data_array.slice(1,166);
 		// get current date
     var date = Date.now();
 
-		for(var i =0;i<33;i++){
+		for(var i =0;i<24;i++){
 			var one_TempData = {
 			  timestamp:date,
 				sensorId: i+1,
@@ -149,15 +147,6 @@ module.exports = (function(){
 			Temp_data.push(one_TempData);
 			Hum_data.push(one_HumData);
 		}
-
-		// emit_TempData = {
-		// 	timestamp:date,
-		// 	Temp_data:Temp_data
-		// };
-		// emit_HumData = {
-		// 	timestamp:date,
-		// 	Hum_data:Hum_data
-		// }
 
 		if((Temp_data!=null) && (Hum_data!=null)){
 			this.emit('datum',Temp_data,Hum_data);
@@ -179,12 +168,6 @@ module.exports = (function(){
 	            console.log("ERROR CHECK ON CHECLSUM, CORROPTEDDATA");
 	    })
 	}
-
-	 // var dhtdriver = new dht;
-	 // dhtdriver.on('event',()=>{
-	 // 	console.log("event happens");
-	 // })
-	 // dhtdriver.start(1,null);
 	return dht;
 }());
 

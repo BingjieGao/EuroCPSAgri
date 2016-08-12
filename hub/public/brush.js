@@ -1,7 +1,7 @@
 
 
 function CreatePlots(width_original,TempData,index,timeData,display_array,ranges){
-
+  //global variables of CreatePlots
   var margin = {top: 20, right: 150, bottom: 120, left: 45};
   var margin2 = {top:0.8,right:10,bottom: 20,left:40};
   var heightAll = width_original /300*150 - 25;
@@ -13,10 +13,13 @@ function CreatePlots(width_original,TempData,index,timeData,display_array,ranges
   var dates_array = [];
   var Tvalue_array = [];
   var Hvalue_array = [];
+  /************************************************************************************/
+
   for(var i=0;i<TempData.length;i++){
     Tvalue_array.push(TempData[i]['Temp']);
     Hvalue_array.push(TempData[i]['Hum']);
   }
+  // Get data array from each sensor
   dataset1_array = findIndex(TempData,index);
   var TempMax,TempMin,HumMax,HumMin;
   var TimeMax,TimeMin;

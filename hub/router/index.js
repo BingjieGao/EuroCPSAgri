@@ -45,7 +45,7 @@ var moistureId = config.getLocal("moistureId");
 var rateId = config.getLocal("rateId");
 var graintypeId = config.getLocal("typeId");
 var HumId = config.getLocal("HumId");
-console.log(moistureId);
+var TempId = config.getLocal("TempId");
 
 var syncConfig = config.getLocal("syncConfig",{ syncType: "nqm-iot-http-sync" });
 var syncLib = require(syncConfig.syncType);
@@ -237,8 +237,6 @@ app.post('/rate',function(req,res){
             cache.cacheThis(cachedata);
           }
         });
-
-
       });
     }
   });
@@ -252,18 +250,48 @@ app.listen(PORT,function(){
 })
 
 
-// dhtDriver.on('datum',handleDriverData);
-
-//time interval start
- // dhtDriver.start(1);
- // setInterval(function(){
- // 	dhtDriver.start(1,null);
- // },1000*60*5);
+var temparray = [
+  {
+    "timestamp": 1470329528391,
+    "sensorId": 1,
+    "Temp": 17.6
+  },
+  {
+    "timestamp": 1470329528391,
+    "sensorId": 2,
+    "Temp": 0
+  },
+  {
+    "timestamp": 1470329528391,
+    "sensorId": 3,
+    "Temp": 17.3
+  },
+  {
+    "timestamp": 1470329528391,
+    "sensorId": 4,
+    "Temp": 18.5
+  }];
+var tempdata = {
+  "id":TempId,
+  "d":temparray
+}
+cache.cacheThis(tempdata);
 
 function handleDriverData(TempData,HumData){
 	console.log(TempData);
 	console.log(HumData);
-	
+
+  var cacheTemp = {
+    "id":TempId,
+    "d":TempData
+  }
+
+  var cacheHum = {
+    "id":HumId,
+    "d":HumData
+  }
+	cache.cacheThis(cacheTemp);
+  cache.cahcheThis(cacheHum);
 	cache.saveTemp(TempData);
 	cache.saveHum(HumData);
 }
