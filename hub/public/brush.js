@@ -529,22 +529,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges){
 
         .attr('y2',function(){
           return height;
-        })
-        .on('click',function(){
-          d3.selectAll('.y-lines').remove();
-          drawAllXLines(Xvalue);
-          d3.selectAll(".tooltip").remove();
-          var click_date = x.invert(Xvalue-Xtranslate);
-          drawAllDateLabel(click_date);
-          var click_data = findTimeData(click_date.getTime());
-          if(click_data != []){
-            for(var i=0;i<display_array.length;i++){
-              var click_svg = d3.select('#svg'+(display_array[i]+1).toString());
-              click_svg.select('#temp-label').text('Celsius: '+click_data[i]['Temp']+'°C');
-              click_svg.select('#hum-label').text('RH: '+click_data[i]['Hum']+'%');
-            }
-          }
-        })
+        });
     }
 
   }
@@ -592,8 +577,8 @@ function CreatePlots(width_original,TempData,index,display_array,ranges){
           if(click_data != []){
             for(var i=0;i<display_array.length;i++){
               var click_svg = d3.select('#svg'+(display_array[i]+1).toString());
-              click_svg.select('#temp-label').text('Celsius: '+click_data[i]['Temp']+'°C');
-              click_svg.select('#hum-label').text('RH: '+click_data[i]['Hum']+'%');
+              click_svg.select('#temp-label').text('Celsius: '+click_data[display_array[i]]['Temp']+'°C');
+              click_svg.select('#hum-label').text('RH: '+click_data[display_array[i]]['Hum']+'%');
             }
           }
         })
@@ -615,8 +600,8 @@ function CreatePlots(width_original,TempData,index,display_array,ranges){
           if(click_data != []){
             for(var i=0;i<display_array.length;i++){
               var click_svg = d3.select('#svg'+(display_array[i]+1).toString());
-              click_svg.select('#temp-label').text('Celsius: '+click_data[i]['Temp']+'°C');
-              click_svg.select('#hum-label').text('RH: '+click_data[i]['Hum']+'%');
+              click_svg.select('#temp-label').text('Celsius: '+click_data[display_array[i]]['Temp']+'°C');
+              click_svg.select('#hum-label').text('RH: '+click_data[display_array[i]]['Hum']+'%');
             }
           }
         })
