@@ -5,7 +5,8 @@ var config = require("./config.js");
 var bodyParser = require('body-parser');
 var fs = require('fs');
 var util = require('util');
-var http = require('http');
+var http = require('https');
+var request = require('sync-request');
 var url = require('url');
 var __dirname = './';
 var path = require('path');
@@ -71,23 +72,37 @@ app.get('/',function(req,res){
 /********************************************************************/
 
 app.get('/timeseries',function(req,res){
-	var TempData = fs.readFileSync(tempDatapath, 'utf8');
-	var HumData = fs.readFileSync(humDatapath,'utf8');
-
-	res.render("timeseries",{
-		TempDatum:JSON.stringify(JSON.parse(TempData).data),
-		HumDatum:JSON.stringify(JSON.parse(HumData).data)
-	});
+  var Tempurl = 'https://q.nqminds.com/v1/datasets/HJlZCrb9t/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":27795}';
+  var Humurl = 'https://q.nqminds.com/v1/datasets/SygcmLb5K/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":27795}';
+  RetriveData(Tempurl,function(err,TempData){
+    if(!err){
+      RetriveData(Humurl,function(err,HumData){
+        if(!err){
+              res.render("timeseries",{
+              TempDatum:JSON.stringify(TempData.data),
+              HumDatum:JSON.stringify(HumData.data)
+            });
+        }
+      })
+    }
+  })
 });
 app.get('/refresh',function(req,res){
-	var tempDatapath = path.join(__dirname,"temp.json");
-	var TempData = fs.readFileSync(tempDatapath, 'utf8');
-	var HumData = fs.readFileSync(humDatapath,'utf8');
-	
-	res.send({
-		TempDatum:JSON.stringify(JSON.parse(TempData).data),
-		HumDatum:JSON.stringify(JSON.parse(HumData).data)
-	});
+
+  var Tempurl = 'https://q.nqminds.com/v1/datasets/HJlZCrb9t/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":20000}';
+  var Humurl = 'https://q.nqminds.com/v1/datasets/SygcmLb5K/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":20000}';
+  RetriveData(Tempurl,function(err,TempData){
+    if(!err){
+      RetriveData(Humurl,function(err,HumData){
+        if(!err){
+              res.send({
+                TempDatum:JSON.stringify(TempData.data),
+                HumDatum:JSON.stringify(HumData.data)
+            });
+        }
+      })
+    }
+  })
 });
 
 app.post('/moisture',function(req,res){
@@ -249,33 +264,27 @@ app.listen(PORT,function(){
 	console.log('listen on '+PORT);
 })
 
+// dhtDriver.on('datum',handleDriverData);
+// dhtDriver.start(1);
 
-var temparray = [
-  {
-    "timestamp": 1470329528391,
-    "sensorId": 1,
-    "Temp": 17.6
-  },
-  {
-    "timestamp": 1470329528391,
-    "sensorId": 2,
-    "Temp": 0
-  },
-  {
-    "timestamp": 1470329528391,
-    "sensorId": 3,
-    "Temp": 17.3
-  },
-  {
-    "timestamp": 1470329528391,
-    "sensorId": 4,
-    "Temp": 18.5
-  }];
-var tempdata = {
-  "id":TempId,
-  "d":temparray
+function RetriveData(URL,cb){
+    http.get(URL, function(res){
+      var body = '';
+
+      res.on('data', function(chunk){
+          body += chunk;
+      });
+
+      res.on('end', function(){
+          var fbResponse = JSON.parse(body);
+          //console.log("Got a response: ", fbResponse["data"]);
+          cb(null,fbResponse);
+      });
+  }).on('error', function(e){
+        console.log("Got an error: ", e);
+        cb(err,null);
+  });
 }
-cache.cacheThis(tempdata);
 
 function handleDriverData(TempData,HumData){
 	console.log(TempData);

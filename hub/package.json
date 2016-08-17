@@ -21,7 +21,8 @@
     "nqmHTTPSync": "git://github.com/nqminds/nqm-iot-http-sync.git",
     "object-keys": "^1.0.11",
     "object.assign": "^4.0.4",
-    "serialport": "^3.1.2"
+    "serialport": "^3.1.2",
+    "sync-request": "^3.0.1"
   },
   "devDependencies": {},
   "scripts": {

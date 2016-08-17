@@ -1,6 +1,6 @@
 
 
-function CreatePlots(width_original,TempData,index,timeData,display_array,ranges){
+function CreatePlots(width_original,TempData,index,display_array,ranges){
   //global variables of CreatePlots
   var margin = {top: 20, right: 150, bottom: 120, left: 45};
   var margin2 = {top:0.8,right:10,bottom: 20,left:40};
@@ -49,6 +49,12 @@ function CreatePlots(width_original,TempData,index,timeData,display_array,ranges
   var earliestDate = lastestDate - 10*60*1000;
 
   var Xdomain = [earliestDate,lastestDate];
+  var x;
+  x = d3.time.scale()
+    .domain(Xdomain)
+    .nice()
+    .range([5, width])
+    .nice();
 
   if(ranges != null) {
     if (!isNaN(ranges.TempMax))
@@ -59,18 +65,12 @@ function CreatePlots(width_original,TempData,index,timeData,display_array,ranges
       HumMax = ranges.HumMax;
     if (!isNaN(ranges.HumMin))
       HumMin = ranges.HumMin;
-    if((ranges.TimeMin !=null) && (ranges.TimeMax !=null)){
-      TimeMin = ranges.TimeMin;
-      TimeMax = ranges.TimeMax;
-      Xdomain = [TimeMin,TimeMax];
+    if(ranges.Xdomain!=null){
+      console.log(ranges.Xdomain(1471260740043));
+      x = ranges.Xdomain;
     }
   }
 
-  var x = d3.time.scale()
-    .domain(Xdomain)
-    .nice()
-    .range([5, width])
-    .nice();
   /*
    * scale for side bar brush
    */
@@ -161,7 +161,7 @@ function CreatePlots(width_original,TempData,index,timeData,display_array,ranges
     .attr("height", 10)
     .attr("transform", "translate(" + 0+ " ,"+(height-40)+")")
     .style("text-anchor","start")
-    .style('fill','steelblue')
+    .style('fill','red')
     .on('mouseover',function(){
       d3.select(this).style('opacity','0.4')
     })
@@ -188,7 +188,7 @@ function CreatePlots(width_original,TempData,index,timeData,display_array,ranges
     .attr("height", 10)
     .attr("transform", "translate(" + 0+ " ,"+(height-10)+")")
     .style("text-anchor","start")
-    .style('fill','red')
+    .style('fill','steelblue')
     .on('mouseover',function(){
       d3.select(this).style('opacity','0.4')
     })
@@ -219,6 +219,36 @@ function CreatePlots(width_original,TempData,index,timeData,display_array,ranges
   var brush = d3.svg.brush()
     .x(x2)
     .on("brush", brushed);
+
+
+  /*
+   * *** draw the mark Line*********************************************************************
+   */ 
+  if(ranges == null || ranges.TimeMax == null || ranges.TimeMin == null){
+    var MarkValue, timeLabel;
+    Xtranslate = width*0.8 - x(lastestDate);
+    MarkValue = x(lastestDate);
+    timeLabel = lastestDate;
+    drawXLines(MarkValue);
+    // console.log(timeData);
+    drawDateLabel(timeLabel);
+    var timeDataObj = null;
+    for(var i=0;i<dataset1_array.length;i++){
+      if(dataset1_array[i]['timestamp'] == timeLabel){
+        timeDataObj = dataset1_array[i];
+      }
+    }
+    svg.select('#temp-label').text('Celsius: '+timeDataObj['Temp']+'°C');
+    svg.select('#hum-label').text('RH: '+timeDataObj['Hum']+'%');
+    svg.selectAll(".x.axis").call(xAxis)
+      .selectAll('text').attr("transform", "translate("+10+",0),rotate(-45)");
+  }
+  //console.log(Xtranslate);
+  /**********************************************************************************/
+
+  if(ranges != null && ranges.TimeMax != null){
+    Xtranslate = 0;
+  }
 
   /*
    * y axis and x axis
@@ -252,37 +282,6 @@ function CreatePlots(width_original,TempData,index,timeData,display_array,ranges
     .attr("dy", ".71em")
     .style("text-anchor", "end")
     .text("Humidity/%");
-  /*
-   * *** draw the mark Line*********************************************************************
-   */	var MarkValue, timeLabel;
-  if(timeData!=null){
-    Xtranslate = width*0.8 - x(timeData.timestamp);
-    MarkValue = x(timeData.timestamp);
-    timeLabel = timeData.timestamp;
-  }
-  else{
-    Xtranslate = width*0.8 - x(lastestDate);
-    MarkValue = x(lastestDate);
-    timeLabel = lastestDate;
-
-  }
-  drawXLines(MarkValue);
-  // console.log(timeData);
-  drawDateLabel(timeLabel);
-  var timeDataObj = null;
-  for(var i=0;i<dataset1_array.length;i++){
-    if(dataset1_array[i]['timestamp'] == timeLabel){
-      timeDataObj = dataset1_array[i];
-    }
-  }
-  svg.select('#temp-label').text('Celsius: '+timeDataObj['Temp']+'°C');
-  svg.select('#hum-label').text('RH: '+timeDataObj['Hum']+'%');
-  //console.log(Xtranslate);
-  /**********************************************************************************/
-
-  if(ranges != null && ranges.TimeMax != null){
-    Xtranslate = 0;
-  }
 
   /*
    * clippath so that zoom won't exceed the plot area
@@ -323,12 +322,12 @@ function CreatePlots(width_original,TempData,index,timeData,display_array,ranges
       var cx = x(tipdata.timestamp);
       var cy_temp = y(tipdata['Temp']);
       var cy_hum = y2(tipdata['Hum']);
-      svg.selectAll("circle").remove();
+      d3.selectAll("circle").remove();
       drawCircles(svg,cx,cy_temp,cy_hum);
       svg.selectAll('.y-lines').remove();
       drawXLines(x(tipdata.timestamp));
       svg.selectAll(".tooltip").remove();
-      drawDateLabel(tipdata.timestamp)
+      drawDateLabel(tipdata.timestamp);
       svg.select('#temp-label').text('Celsius: '+tipdata['Temp']+'°C');
       svg.select('#hum-label').text('RH: '+tipdata['Hum']+'%');
       ;
@@ -339,6 +338,7 @@ function CreatePlots(width_original,TempData,index,timeData,display_array,ranges
     })
   /*********************************************************************************/
   var CreateHum = d3.svg.line()
+    .defined(function(d){ return d['Hum']!=null})
     .x(function(d){
       if(ranges != null && ranges.TimeMax != null)
         return x(d.timestamp);
@@ -364,6 +364,7 @@ function CreatePlots(width_original,TempData,index,timeData,display_array,ranges
     })
 
   var CreateTemp = d3.svg.line()
+    .defined(function(d){ return d['Temp']!=null})
     .x(function(d){
       if(ranges != null && ranges.TimeMax != null)
         return x(d.timestamp);
@@ -389,6 +390,7 @@ function CreatePlots(width_original,TempData,index,timeData,display_array,ranges
     })
 
   var CreateHumBrush = d3.svg.line()
+    .defined(function(d){ return d['Hum']!=null})
     .x(function(d){
       return x2(d.timestamp);
     })
@@ -411,6 +413,7 @@ function CreatePlots(width_original,TempData,index,timeData,display_array,ranges
     })
 
   var CreateTempBrush = d3.svg.line()
+    .defined(function(d){ return d['Temp']!=null})
     .x(function(d){
       return x2(d.timestamp);
     })
@@ -440,7 +443,7 @@ function CreatePlots(width_original,TempData,index,timeData,display_array,ranges
     .attr('d',CreateTemp)
     .attr('class','temp-line')
     .attr('id','temp-line'+index.toString())
-    .attr('stroke', 'steelblue')
+    .attr('stroke', 'red')
     .attr('stroke-width', 3.5)
     .attr('fill', 'none')
 
@@ -449,12 +452,12 @@ function CreatePlots(width_original,TempData,index,timeData,display_array,ranges
     .attr('d',CreateHum)
     .attr('id','hum-line'+index.toString())
     .attr('class','hum-line')
-    .attr('stroke', 'red')
+    .attr('stroke', 'steelblue')
     .attr('stroke-width', 3.5)
     .attr('fill', 'none')
   /***********************************************************************************/
   /*
-   * define the hovered circle varaibles
+   * define the hovesteelblue circle varaibles
    */
   var Temp_dot = mainchart.append('g')
     .attr('id','temp-dot'+index.toString());
@@ -471,7 +474,7 @@ function CreatePlots(width_original,TempData,index,timeData,display_array,ranges
     .datum(dataset1_array)
     .attr("d", CreateTempBrush)
     .attr('class','temp-brushline')
-    .attr('stroke', 'steelblue')
+    .attr('stroke', 'red')
     .attr('stroke-width', 3.5)
     .attr('fill', 'none')
 
@@ -479,7 +482,7 @@ function CreatePlots(width_original,TempData,index,timeData,display_array,ranges
     .datum(dataset1_array)
     .attr("d", CreateHumBrush)
     .attr('class','hum-brushline')
-    .attr('stroke', 'red')
+    .attr('stroke', 'steelblue')
     .attr('stroke-width', 3.5)
     .attr('fill', 'none')
 
@@ -523,23 +526,78 @@ function CreatePlots(width_original,TempData,index,timeData,display_array,ranges
     }
 
   }
+  function drawAllXLines(x){
+    var Xvalue = x;
+    if(Xvalue>0 && Xvalue<width ){
+      d3.selectAll('.mainchart').append('g:line')
+        .attr('class','y-lines')
+        .style('stroke','grey')
+        .style('stroke-opacity','50%')
+        .style('stroke-width',0.7)
+        .attr('x1',function(){
+          return Xvalue;
+        })
+        .attr('x2',function(){
+          return Xvalue;
+        })
+        .attr('y1',function(){
+          return 0;
+        })
+
+        .attr('y2',function(){
+          return height;
+        });
+    }
+
+  }
   function drawCircles(svg,cx,cy_temp,cy_hum){
-    cx = cx+Xtranslate
+    cx = cx+Xtranslate;
     if(cx<width && cx>0 && cy_temp<height && cy_temp>0){
       Temp_dot.append("circle")
         .attr('class','dot')
         .attr('r',5)
-        .style('fill','steelblue')
+        .style('fill','red')
         .attr('cx',cx)
         .attr('cy',cy_temp)
+        .on("click",function(){
+          d3.selectAll('.y-lines').remove();
+          drawAllXLines(cx);
+          d3.selectAll(".tooltip").remove();
+          var click_date = x.invert(cx-Xtranslate);
+          drawAllDateLabel(click_date);
+          var click_data = findTimeData(click_date.getTime());
+          console.log(click_date.getTime());
+          if(click_data != []){
+            for(var i=0;i<24;i++){
+              var click_svg = d3.select('#svg'+(i+1).toString());
+              click_svg.select('#temp-label').text('Celsius: '+click_data[i]['Temp']+'°C');
+              click_svg.select('#hum-label').text('RH: '+click_data[i]['Hum']+'%');
+            }
+          }
+        })
     }
     if(cx<width && cx>0 && cy_hum<height && cy_hum>0){
       Hum_dot.append("circle")
         .attr('class','dot')
         .attr('r',5)
-        .style('fill','red')
+        .style('fill','steelblue')
         .attr('cx',cx)
         .attr('cy',cy_hum)
+        .on("click",function(){
+          d3.selectAll('.y-lines').remove();
+          drawAllXLines(cx);
+          d3.selectAll(".tooltip").remove();
+          var click_date = x.invert(cx-Xtranslate);
+          drawAllDateLabel(click_date);
+          var click_data = findTimeData(click_date.getTime());
+          if(click_data != []){
+            for(var i=0;i<24;i++){
+              var click_svg = d3.select('#svg'+(i+1).toString());
+              click_svg.select('#temp-label').text('Celsius: '+click_data[i]['Temp']+'°C');
+              click_svg.select('#hum-label').text('RH: '+click_data[i]['Hum']+'%');
+            }
+          }
+        })
     }
   }
   function removeAll(){
@@ -553,7 +611,14 @@ function CreatePlots(width_original,TempData,index,timeData,display_array,ranges
       .attr("transform", "translate(" + 20+ " ,20)")
       .append("text")
       .text(new Date(date))
+  }
+  function drawAllDateLabel(date){
 
+    var tooltip = d3.selectAll('.mainchart').append("g")
+      .attr("class", "tooltip")
+      .attr("transform", "translate(" + 20+ " ,20)")
+      .append("text")
+      .text(new Date(date))
   }
 
   function zoomed() {
@@ -580,14 +645,15 @@ function CreatePlots(width_original,TempData,index,timeData,display_array,ranges
       "TempMin":y.domain()[0],
       "HumMax":y2.domain()[1],
       "HumMin":y2.domain()[0],
-      "TimeMax":x.domain()[1],
-      "TimeMin":x.domain()[0]
+      "TimeMax":NaN,
+      "TimeMin":NaN,
+      "Xdomain":x
     }
-
+    console.log(x(1471260740043));
     for(var i=0;i<display_array.length;i++){
       if(display_array[i]!=index) {
         d3.select('#svg' + (display_array[i] + 1).toString()).remove();
-        CreatePlots(width_original, TempData, display_array[i], null, display_array, this_ranges);
+        CreatePlots(width_original, TempData, display_array[i],display_array, this_ranges);
       }
     }
     var this_domain = [];
@@ -605,26 +671,37 @@ function CreatePlots(width_original,TempData,index,timeData,display_array,ranges
   }
 
   function brushed(){
+    Xtranslate = 0;
     x.domain(brush.empty() ? x2.domain() : brush.extent());
+    var this_domain = [x.domain()[0],x.domain()[1]];
+    console.log(this_domain);
     var this_ranges = {
       "TempMax":NaN,
       "TempMin":NaN,
       "HumMax":NaN,
       "HumMin":NaN,
-      "TimeMax":x.domain()[1],
-      "TimeMin":x.domain()[0]
+      "TimeMax":NaN,
+      "TimeMin":NaN,
+      "Xdomain":x
     }
+    var Xbrushed = d3.time.scale()
+    .domain(x.domain())
+    .nice()
+    .range([5, width])
+    .nice();
+
+    console.log(x(1471285714141));
     svg.select(".hum-line").attr("d", CreateHum);
     svg.select('.temp-line').attr("d",CreateTemp);
+    svg.selectAll(".x.axis").call(xAxis)
+      .selectAll('text').attr("transform", "translate("+10+",0),rotate(-45)");
     for(var i=0;i<display_array.length;i++){
       if(display_array[i] != index) {
         var this_svg = d3.select('#svg' + (display_array[i] + 1).toString());
         this_svg.remove();
-        CreatePlots(width_original, TempData, display_array[i], null, display_array, this_ranges);
+        CreatePlots(width_original, TempData, display_array[i],display_array, this_ranges);
       }
     }
-    svg.select(".x.axis").call(xAxis)
-      .selectAll('text').attr("transform", "translate("+10+",0),rotate(-45)");
   }
 
   function findNearest(xMouse,data){
@@ -650,135 +727,15 @@ function CreatePlots(width_original,TempData,index,timeData,display_array,ranges
     }
     return ans_array;
   }
-}
-
-
-function TimeLine(width,data,display_array,chart_width){
-
-  var margin = {top:40, right:20, bottom:37.5, left:20};
-  //width = width - margin.right-margin.left;
-  var height = 80-margin.top-margin.bottom
-  /**********************************************************/
-  var dates = [];
-  var data_array = [];
-  data.forEach(function(d){
-    dates.push(d.timestamp);
-  });
-
-  var lastest = Math.max.apply(null,dates);
-  /**********************************************************/
-
-  var x_timeline = d3.time.scale()
-    .domain(d3.extent(data, function(d) {return d.timestamp; }))
-    .nice()
-    .range([5, width]);
-
-
-  var tLine = d3.select("#time-bar").append("svg")
-    .attr("width",width)
-    .attr("height",height+margin.top+margin.bottom)
-    .append('g');
-
-  //tLine.call(zoomTime);
-
-
-  var tBar = tLine.append('rect')
-    .attr('height',height)
-    .attr('width',width)
-    .attr('id','bar-rect')
-    .attr('fill','gray')
-    .attr('transform','translate(0,'+(height+margin.top)+')');
-
-  var tMarker = tLine.selectAll('.bar-marker')
-    .data(data).enter()
-    .append('rect')
-    .attr('class','bar-marker')
-    .attr('fill','grey')
-    .attr('height',15)
-    .attr('width',1)
-    .attr('transform',function(d){
-      var xMove = x_timeline(d.timestamp);
-      return "translate("+xMove+','+(height+margin.top-15)+')';
-    })
-
-  var drag = d3.behavior.drag()
-    .origin(Object)
-    .on("drag", dragMove)
-    //.on('dragend', dragEnd);
-
-
-  var drag_obj = tLine.append("circle")
-    .attr("r", 6)
-    .attr("cx", x_timeline(new Date(lastest)))
-    .attr("cy", (height+margin.top+1.5))
-    .attr("fill", "#2394F5")
-    .call(drag);
-
-
-  function zoomTimeLine() {
-    console.log(x_timeline.domain());
-    tMarker.remove();
-    tLine.selectAll('.bar-marker')
-      .data(data).enter()
-      .append('rect')
-      .attr('class','bar-marker')
-      .attr('fill','grey')
-      .attr('height',15)
-      .attr('width',1)
-      .attr('transform',function(d){
-        var xMove = x_timeline(d.timestamp);
-        return "translate("+xMove+','+(height+margin.top-15)+')';
-      })
-
-  }
-  function dragMove(d) {
-    d3.select(this)
-      .attr("opacity", 0.6)
-      .attr("cx",  Math.max(10,Math.min(width-10,d3.mouse(this)[0])));
-
-    var cx = d3.select(this).attr("cx");
-    var timeData = findNearest(x_timeline.invert(cx));
-    cx = x_timeline(timeData.timestamp);
-    d3.select(this)
-      .attr('opacity', 1)
-      .attr("cx",cx);
-
-    d3.selectAll('.mark-lines').remove();
-    //drawXLines(x_scale(timeData.timestamp));
-    tLine.selectAll('text').remove();
-    tLine.append('text')
-      .text(new Date(timeData.timestamp))
-      .attr('transform','translate(0,20)')
-
-    for(var i = 0;i<display_array.length;i++){
-      d3.select('#svg'+(display_array[i]+1).toString()).remove();
-    }
-    for(var i = 0;i<display_array.length;i++){
-      CreatePlots(chart_width,data,display_array[i],timeData);
-    }
-  }
-
-  function dragEnd() {
-
-
-  }
-
-  function findNearest(xMouse){
+  function findTimeData(xMouse){
     console.log(xMouse);
-    console.log(data);
-    var MAX_NUMBER = Number.MAX_VALUE;
-    var tipdata = null;
-    data.forEach(function(d){
-      var diff = Math.abs(d.timestamp - xMouse);
-      if( diff < MAX_NUMBER){
-        MAX_NUMBER = diff;
-        tipdata = d;
+    var tipdata = [];
+    TempData.forEach(function(d){
+      if(d.timestamp == xMouse){
+        tipdata.push(d);
       }
     })
     console.log(tipdata);
     return tipdata;
   }
-
 }
-
-
