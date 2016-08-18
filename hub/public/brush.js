@@ -509,8 +509,8 @@ function CreatePlots(width_original,TempData,index,display_array,ranges){
 
 
   /***********************************************functions*********************************/
-  function drawXLines(x){
-    var Xvalue = x+Xtranslate;
+  function drawXLines(this_x){
+    var Xvalue = this_x+Xtranslate;
     if(Xvalue>0 && Xvalue<width ){
       mainchart.append('g:line')
         .attr('class','y-lines')
@@ -529,7 +529,22 @@ function CreatePlots(width_original,TempData,index,display_array,ranges){
 
         .attr('y2',function(){
           return height;
-        });
+        })
+        .on("click",function(){
+          d3.selectAll('.y-lines').remove();
+          drawAllXLines(Xvalue);
+          d3.selectAll(".tooltip").remove();
+          var click_date = x.invert(Xvalue-Xtranslate);
+          drawAllDateLabel(click_date);
+          var click_data = findTimeData(click_date.getTime());
+          if(click_data.length>0){
+            for(var i=0;i<display_array.length;i++){
+              var click_svg = d3.select('#svg'+(display_array[i]+1).toString());
+              click_svg.select('#temp-label').text('Celsius: '+click_data[display_array[i]]['Temp']+'°C');
+              click_svg.select('#hum-label').text('RH: '+click_data[display_array[i]]['Hum']+'%');
+            }
+          }
+        })
     }
 
   }
@@ -574,7 +589,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges){
           drawAllDateLabel(click_date);
           var click_data = findTimeData(click_date.getTime());
           console.log(click_date.getTime());
-          if(click_data != []){
+          if(click_data.length>0){
             for(var i=0;i<display_array.length;i++){
               var click_svg = d3.select('#svg'+(display_array[i]+1).toString());
               click_svg.select('#temp-label').text('Celsius: '+click_data[display_array[i]]['Temp']+'°C');
@@ -597,7 +612,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges){
           var click_date = x.invert(cx-Xtranslate);
           drawAllDateLabel(click_date);
           var click_data = findTimeData(click_date.getTime());
-          if(click_data != []){
+          if(click_data.length>0){
             for(var i=0;i<display_array.length;i++){
               var click_svg = d3.select('#svg'+(display_array[i]+1).toString());
               click_svg.select('#temp-label').text('Celsius: '+click_data[display_array[i]]['Temp']+'°C');

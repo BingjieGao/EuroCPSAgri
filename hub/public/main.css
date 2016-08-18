@@ -261,14 +261,14 @@ body {
   font-size: 14px;
   font-weight: inherit; }
   .sidebar:first-child {
-    margin-top: 53px; }
+    margin-top: 59px; }
 
 .inactive {
   display: none; }
 
 .sidebar-column > .material-icons {
   padding: 0px;
-  transform: translateY(-12px);
+  transform: translateY(2px);
   height: 24px;
   width: 24px;
   color: #424242; }
@@ -398,6 +398,7 @@ body {
 .dropdown {
     position: relative;
     display: inline-block;
+    margin-left:20px;
 }
 
 .dropdown-content {
