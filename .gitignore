@@ -3,7 +3,7 @@ coverage
 #node_modules
 node_modules
 cache
-#temp.json
-#hum.json
-
+temp.json
+hum.json
+*.xml
 
