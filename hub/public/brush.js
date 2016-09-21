@@ -17,7 +17,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges){
 
   for(var i=0;i<TempData.length;i++){
     Tvalue_array.push(TempData[i]['Temp']);
-    Hvalue_array.push(TempData[i]['Hum']);
+    Hvalue_array.push(TempData[i]['EMC']);
   }
   // Get data array from each sensor
   dataset1_array = findIndex(TempData,index);
@@ -246,7 +246,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges){
       }
     }
     svg.select('#temp-label').text('Celsius: '+timeDataObj['Temp']+'°C');
-    svg.select('#hum-label').text('RH: '+timeDataObj['Hum']+'%');
+    svg.select('#hum-label').text('RH: '+timeDataObj['EMC']+'%');
     svg.selectAll(".x.axis").call(xAxis)
       .selectAll('text').attr("transform", "translate("+10+",0),rotate(-45)");
   }
@@ -328,7 +328,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges){
     if(tipdata != null){
       var cx = x(tipdata.timestamp);
       var cy_temp = y(tipdata['Temp']);
-      var cy_hum = y2(tipdata['Hum']);
+      var cy_hum = y2(tipdata['EMC']);
       d3.selectAll("circle").remove();
       drawCircles(svg,cx,cy_temp,cy_hum);
       svg.selectAll('.y-lines').remove();
@@ -336,7 +336,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges){
       svg.selectAll(".tooltip").remove();
       drawDateLabel(tipdata.timestamp);
       svg.select('#temp-label').text('Celsius: '+tipdata['Temp']+'°C');
-      svg.select('#hum-label').text('RH: '+tipdata['Hum']+'%');
+      svg.select('#hum-label').text('RH: '+tipdata['EMC']+'%');
       ;
     }
   })
@@ -345,7 +345,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges){
     })
   /*********************************************************************************/
   var CreateHum = d3.svg.line()
-    .defined(function(d){ return d['Hum']!=null})
+    .defined(function(d){ return d['EMC']!=null})
     .x(function(d){
       if(ranges != null && ranges.TimeMax != null)
         return x(d.timestamp);
@@ -353,11 +353,11 @@ function CreatePlots(width_original,TempData,index,display_array,ranges){
         return (x(d.timestamp)+Xtranslate);
     })
     .y(function(d,i){
-      if(d['Hum'] == 0) {
+      if(d['EMC'] == 0) {
         var j = i;
         while(j>0){
-          if(dataset1_array[j-1]['Hum'] != 0){
-            return y2(dataset1_array[j-1]['Hum']);
+          if(dataset1_array[j-1]['EMC'] != 0){
+            return y2(dataset1_array[j-1]['EMC']);
             break;
           }
           else
@@ -366,7 +366,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges){
         return y2(0);
       }
       else {
-        return y2(d['Hum']);
+        return y2(d['EMC']);
       }
     })
 
@@ -397,16 +397,16 @@ function CreatePlots(width_original,TempData,index,display_array,ranges){
     })
 
   var CreateHumBrush = d3.svg.line()
-    .defined(function(d){ return d['Hum']!=null})
+    .defined(function(d){ return d['EMC']!=null})
     .x(function(d){
       return x2(d.timestamp);
     })
     .y(function(d,i){
-      if(d['Hum'] == 0) {
+      if(d['EMC'] == 0) {
         var j = i;
         while(j>0){
-          if(dataset1_array[j-1]['Hum'] != 0){
-            return yBrush2(dataset1_array[j-1]['Hum']);
+          if(dataset1_array[j-1]['EMC'] != 0){
+            return yBrush2(dataset1_array[j-1]['EMC']);
             break;
           }
           else
@@ -415,7 +415,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges){
         return yBrush2(0);
       }
       else {
-        return yBrush2(d['Hum']);
+        return yBrush2(d['EMC']);
       }
     })
 
@@ -541,7 +541,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges){
             for(var i=0;i<display_array.length;i++){
               var click_svg = d3.select('#svg'+(display_array[i]+1).toString());
               click_svg.select('#temp-label').text('Celsius: '+click_data[display_array[i]]['Temp']+'°C');
-              click_svg.select('#hum-label').text('RH: '+click_data[display_array[i]]['Hum']+'%');
+              click_svg.select('#hum-label').text('RH: '+click_data[display_array[i]]['EMC']+'%');
             }
           }
         })
@@ -588,12 +588,12 @@ function CreatePlots(width_original,TempData,index,display_array,ranges){
           var click_date = x.invert(cx-Xtranslate);
           drawAllDateLabel(click_date);
           var click_data = findTimeData(click_date.getTime());
-          console.log(click_date.getTime());
+          console.log(click_date);
           if(click_data.length>0){
             for(var i=0;i<display_array.length;i++){
               var click_svg = d3.select('#svg'+(display_array[i]+1).toString());
               click_svg.select('#temp-label').text('Celsius: '+click_data[display_array[i]]['Temp']+'°C');
-              click_svg.select('#hum-label').text('RH: '+click_data[display_array[i]]['Hum']+'%');
+              click_svg.select('#hum-label').text('RH: '+click_data[display_array[i]]['EMC']+'%');
             }
           }
         })
@@ -616,7 +616,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges){
             for(var i=0;i<display_array.length;i++){
               var click_svg = d3.select('#svg'+(display_array[i]+1).toString());
               click_svg.select('#temp-label').text('Celsius: '+click_data[display_array[i]]['Temp']+'°C');
-              click_svg.select('#hum-label').text('RH: '+click_data[display_array[i]]['Hum']+'%');
+              click_svg.select('#hum-label').text('RH: '+click_data[display_array[i]]['EMC']+'%');
             }
           }
         })

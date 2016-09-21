@@ -49,70 +49,6 @@
         </div>
         <div class="close"></div>
     </div>
-    <div class="form-container1">
-        <div class="form">
-        <h3>Add moisture content</h3>
-            <div class="form-content">
-                <div id="moisture">
-                    <form>
-                    <label>moisture</label>
-                    <input type="number" name="moisture" required>
-                     <div class="warning" id="moistureerror">This field should be a number</div>
-                    </form>
-                </div>
-                <div class="clearfix"></div>
-                <div id="time">
-                    <label>timestamp</label>
-                    <input type="text" id="datepicker" name="date" required />
-                    <input type="time" style="overflow:hidden" name="time" step="1" id="timepicker" required />
-                </div>
-
-            </div>
-            <div class="submit-button" id="submit-button"><span>Submit</span></div>
-            <div class="cancel-button" id="cancel-button"><span>Cancel</span></div>
-        </div>
-        <div class="close"></div>
-    </div>
-    <div class="form-container2">
-        <div class="form">
-            <h3>Add Grain Type</h3>
-            <div class="form-content">
-                <div id="grain-type">
-                    <form>
-                        <label>ADD Grain Type</label>
-                        <input type="text" name="grain-type" required>
-                        <div class="warning" id="grainerror">This field should not be left blank</div>
-                    </form>
-                </div>
-            </div>
-            <div class="submit-button" id="submit-button2"><span>Submit</span></div>
-            <div class="cancel-button" id="cancel-button2"><span>Cancel</span></div>
-        </div>
-        <div class="close"></div>
-    </div>
-    <div class="form-container3">
-        <div class="form">
-            <h3>Add Discharge rate</h3>
-            <div class="form-content">
-                <div id="discharge-rate">
-                    <form>
-                        <label>Add Discharge rate</label>
-                        <input type="number" name="discharge-rate" required>
-                        <div class="warning" id="discharge-error">This field should be a number</div>
-                    </form>
-                </div>
-                <div class="clearfix"></div>
-                <div id="time">
-                    <label>timestamp</label>
-                    <input type="text" id="datepicker1" name="date1" required />
-                    <input type="time" style="overflow:hidden" name="time1" step="1" id="timepicker1" required />
-                </div>
-            </div>
-            <div class="submit-button" id="submit-button3"><span>Submit</span></div>
-            <div class="cancel-button" id="cancel-button2"><span>Cancel</span></div>
-        </div>
-        <div class="close"></div>
-    </div>
     <div class="clearfix"></div>
     <div class="container">
         <!--
@@ -123,20 +59,6 @@
             <div class="sidebar-column" id="add-range">
                 <span class="material-icons">add_box</span>
                 <div style="display:inline-block;overflow: hidden;text-overflow:ellipsis;">Add Display Range</div>
-            </div>
-            <div class="sidebar-column" id="add">
-                <span class="material-icons">add_box</span>
-                <div style="display:inline-block;overflow: hidden;text-overflow:ellipsis;">Add Moisture</div>
-            </div>
-
-            <div class="sidebar-column" id="add-type">
-                <span class="material-icons">add_box</span>
-                <div style="display:inline-block;overflow: hidden;text-overflow:ellipsis;">Add Grain Type</div>
-            </div>
-
-            <div class="sidebar-column" id="add-rate" >
-                <span class="material-icons">add_box</span>
-                <div style="display:inline-block;overflow: hidden;text-overflow:ellipsis;">Add discharge rate</div>
             </div>
         </div>
 <!-- ************************************************************ -->
@@ -168,10 +90,6 @@
                     <div id="disD_right">RIGHT</div>
                   </div>
             </div>
-            <label class="switch">
-              <input type="checkbox" name="refresh" id="check_box">
-              <div class="toggle round"></div>
-            </label>
             <div class="clearfix"></div>
             
             <div class="draw">
@@ -326,7 +244,7 @@
         gFANRIGHT,
         gFANMIDDLE,
         gFANLEFT= [];
-    gALL = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
+    gALL = [1,4,7,10,12,15,18,21];
     gDRYER = [0,1,2,3,4,5,6,7,8,9,10,11];
     gFAN = [12,13,14,15,16,17,18,19,20,21,22,23];
     gRIGHT = [0,3,6,9,12,15,18,21];
@@ -348,7 +266,7 @@
 <script>
     /***********************************************************************************/
     var gTempData = <%-TempDatum%>
-    var gHumData = <%-HumDatum%>
+    var gEMCData = <%-EMCDatum%>
 
 
 
@@ -361,50 +279,8 @@
     };
 
     $(document).ready(function(){
-        /*
-    * refresh page
-    */
         draw(gALL,null,null,false);
-        if($('#check_box').is(':checked')){
-            console.log('self-refresh turned on');
-            setInterval(function() {
-                $.ajax({
-                    type:"GET",
-                    url: "/refresh",
-                    success:function(d){
-                        var TEMP = JSON.parse(d.TempDatum);
-                        var HUM = JSON.parse(d.HumDatum);
-                        var whole = gdisplay_par>0.9?true:false;
-                        draw(gdisplay_array,TEMP,HUM,whole);
-                    }
-                });
-
-            }, 1000*60);
-        }
-        else
-        {
-            console.log('self-refresh canceled');
-        }
-
     });
-    $('#check_box').change(function(){
-        if($(this).is(":checked")){
-            console.log('self-refresh turned on');
-            setInterval(function() {
-                $.ajax({
-                    type:"GET",
-                    url: "/refresh",
-                    success:function(d){
-                        var TEMP = JSON.parse(d.TempDatum);
-                        var HUM = JSON.parse(d.HumDatum);
-                        var whole = gdisplay_par>0.9?true:false;
-                        draw(gdisplay_array,TEMP,HUM,whole);
-                    }
-                });
-
-            }, 1000*60);
-        }
-    })
     $( window ).resize(function() {
         var width = $(window).width();
         d3.selectAll('svg').remove();
@@ -413,13 +289,13 @@
     })
 
 
-    function draw(display_array,TempData,HumData,whole){
+    function draw(display_array,TempData,EMCData,whole){
         var display_par;
         gdisplay_array = display_array;
 
-        if((TempData != null) && (HumData != null)){
+        if((TempData != null) && (EMCData != null)){
             gTempData = TempData;
-            gHumData = HumData;
+            gEMCData = EMCData;
         }
         if(whole == true)
             display_par = 1;
@@ -450,7 +326,7 @@
                     var newObj1 = {};
                     newObj1['timestamp'] = gTempData[i].timestamp;
                     newObj1['Temp'] = gTempData[i]['Temp']>100?0:gTempData[i]['Temp'];
-                    newObj1['Hum'] = gHumData[i]['Hum']>100?0:gHumData[i]['Hum'];
+                    newObj1['EMC'] = gEMCData[i]['EMC'];
                     newObj1['sensorId'] = gTempData[i]['sensorId'];
                     timestamp_array.push(newObj1);
                     newTime = gTempData[i]['timestamp'];
@@ -460,7 +336,7 @@
                         var newObj = {};
                         newObj['timestamp'] = newTime-1000*20;
                         newObj['Temp'] = null;
-                        newObj['Hum'] = null;
+                        newObj['EMC'] = null;
                         newObj['sensorId'] = j+1;
                         timestamp_array.push(newObj);
                         newTime -= 1000*20; 
@@ -472,7 +348,7 @@
         // for(var i=0;i<gTempData.length;i++){
         //     gTempData[i]['timestamp'] = gTempData[i].timestamp;
         //     gTempData[i]['Temp'] = +gTempData[i]['Temp'];
-        //     gTempData[i]['Hum'] = +gHumData[i]['Hum'];
+        //     gTempData[i]['Hum'] = +gEMCData[i]['Hum'];
         //     gTempData[i]['sensorId'] = +gTempData[i]['sensorId'];
         // };
         TempData = timestamp_array;
@@ -489,10 +365,10 @@
     }
     /*******************************************************************************/
     function findHum(this_time,this_id){
-        for(var i=0;i<gHumData.length;){
-            if(gHumData[i].timestamp == this_time){
-                if(gHumData[i]['sensorId'] == this_id)
-                    return gHumData[i]['Hum'];
+        for(var i=0;i<gEMCData.length;){
+            if(gEMCData[i].timestamp == this_time){
+                if(gEMCData[i]['sensorId'] == this_id)
+                    return gEMCData[i]['EMC'];
             }
             else
                 i++;
@@ -532,185 +408,7 @@
             setTimeout(draw(gdisplay_array,null,null,true),1000);
         }
     });
-    /***********************************************************/
-    /*
-    * add moisture
-    */
-    var add = $('#add');
-    var form = $('.form-container1');;
-    add.click(function(){
-        console.log('click');
-        $('.form-container1').css('display','block');
-        var date = new Date();
-        var date_array = date.toISOString().split('T');
-        var dateString = '';
-        //date_array = date_array[0].replace(/-/g,'/');
-        date_array = date_array[0].split('-');
-        dateString = date_array[1]+'/'+date_array[2]+'/'+date_array[0];
-        document.getElementById('timepicker').value = date.toTimeString().substr(0,5);
-        document.getElementById('datepicker').value = dateString;
-    })
-
-    /*****************************moisture form ************************/
-    /*
-    * close add moisture
-    */
-    var cancel = $('.cancel-button');
-    var submit = $('#submit-button');
-    var moisture = $('input[name=moisture]');
-
-    /*
-    * bind input event
-    */
-    moisture.bind("input propertychange",function(){
-        if( !parseFloat($(this).val())|| $(this).val() == ''){
-            $('#moistureerror').css('display','block');
-            console.log('moisture should be number');
-        }
-        else{
-            $('#moistureerror').css('display','none');
-        }
-    })
-    console.log(parseFloat(moisture));
-
-    cancel.click(function(){
-        $("div[class*='form-container']").css('display','none');
-        $('.sidebar-active').removeClass('sidebar-active');
-        gdisplay_class.addClass('sidebar-active');
-    })
-    submit.click(function(){
-        var moisture = $('input[name=moisture]').val();
-        if(parseFloat(moisture)) {
-            var date = $('input[name=date]').val();
-            var time = $('input[name=time]').val();
-            console.log('date is =>');
-            console.log(date);
-            console.log(time);
-            date_array = date.split('/');
-            date = date_array[2] + '-' + date_array[0] + '-' + date_array[1] + 'T';
-            date = date_array[2] + '-' + date_array[0] + '-' + date_array[1] + 'T';
-            var timestamp = new Date(date + time).getTime() / 1000;
-            console.log(date + time);
-            console.log(new Date(date + time));
-            console.log(timestamp);
-            var data = {"timestamp":timestamp, "moisture": parseFloat(moisture)};
-            console.log(data);
-
-            $.ajax({
-                type: "POST",
-                url: "/moisture",
-                contentType:"application/json; charset=utf-8",
-                dataType:"json",
-                data: JSON.stringify(data),
-                success: function () {
-                    console.log('moisture added');
-                    form.css('display', 'none');
-                    add.removeClass('sidebar-active');
-                    gdisplay_class.addClass('sidebar-active');
-                }
-            })
-        }
-        else{
-            $('#moistureerror').css('display','block');
-        }
-    });
-    /********************************************************************************/
-    /*
-    * Add Grain Type
-    */
-    var form2 = $('.form-container2');
-    var submit2 = $('#submit-button2');
-    $('#add-type').click(function(){
-        form2.css('display','block');
-    });
-    $('#submit-button2').click(function(){
-        var grain_type = $('input[name=grain-type]').val();
-        console.log(grain_type);
-        if(grain_type == '' || grain_type.length<0 ){
-            $('#grainerror').css('display','block');
-        }
-        else {
-            grain_data = {"timestamp": new Date().getTime(), "type": grain_type};
-
-            $.ajax({
-                type: "POST",
-                url: "/graintype",
-                contentType:"application/json; charset=utf-8",
-                dataType:"json",
-                data: JSON.stringify(grain_data),
-                success: function () {
-                    console.log('new type added');
-                    form2.css('display', 'none');
-                }
-            })
-        }
-    })
-    /*
-     * Add Grain Type
-     */
-
-    var add_rate = $('#add-rate');
-    var form3 = $('.form-container3');
-    var discharge = $('input[name=discharge-rate]');
-    add_rate.click(function(){
-        form3.css('display','block');
-        var date = new Date();
-        var date_array = date.toISOString().split('T');
-        var dateString = '';
-        //date_array = date_array[0].replace(/-/g,'/');
-        date_array = date_array[0].split('-');
-        dateString = date_array[1]+'/'+date_array[2]+'/'+date_array[0];
-        document.getElementById('timepicker1').value = date.toTimeString().substr(0,5);
-        document.getElementById('datepicker1').value = dateString;
-    })
-    discharge.bind("input propertychange",function(){
-        if( !parseFloat($(this).val())|| $(this).val() == ''){
-            $('#discharge-error').css('display','block');
-            console.log('discharge rate should be number');
-        }
-        else{
-            $('#discharge-error').css('display','none');
-        }
-    })
-    $('#submit-button3').click(function(){
-        var discharge_rate = $('input[name=discharge-rate]').val();
-        console.log(discharge_rate);
-        if(discharge_rate == '' || discharge_rate.length<0){
-            $('#discharge-error').css('display','block');
-        }
-        else {
-            var date = $('input[name=date1]').val();
-            var time = $('input[name=time1]').val();
-            console.log('date is =>');
-            console.log(date);
-            console.log(time);
-            date_array = date.split('/');
-            date = date_array[2] + '-' + date_array[0] + '-' + date_array[1] + 'T';
-            date = date_array[2] + '-' + date_array[0] + '-' + date_array[1] + 'T';
-            var timestamp = new Date(date + time).getTime() / 1000;
-            console.log(date + time);
-            console.log(new Date(date + time));
-            console.log(timestamp);
-
-            rate_data = {"timestamp": timestamp, "rate": parseFloat(discharge_rate)};
-
-            $.ajax({
-                type: "POST",
-                url: "/rate",
-                contentType:"application/json; charset=utf-8",
-                dataType:"json",
-                data: JSON.stringify(rate_data),
-                success: function () {
-                    console.log('new rate added');
-                    $('.form-container3').css('display', 'none');
-                    add_rate.removeClass('sidebar-active');
-                    gdisplay_class.addClass('sidebar-active');
-
-                }
-            })
-        }
-    })
-
+    /*--------------------------------------------------------------------------------*/
     /*
     * Add input range
     */
@@ -878,11 +576,6 @@ $('#disD_right').click(function(){
         $(this).addClass('sidebar-active');
         $(this).siblings().removeClass('sidebar-active');
     });
-
-    selectors.click(function(){
-        $(this).addClass('selects-active');
-        $(this).siblings().removeClass('selects-active');
-    })
 </script>
 
 </html>

@@ -73,31 +73,31 @@ app.get('/',function(req,res){
 
 app.get('/timeseries',function(req,res){
 
-  /*
-  read from local*/
+  // /*
+  // read from local*/
   
-  var TempData = fs.readFileSync(tempDatapath, 'utf8');
-  var HumData = fs.readFileSync(humDatapath,'utf8');
+  // var TempData = fs.readFileSync(tempDatapath, 'utf8');
+  // var HumData = fs.readFileSync(humDatapath,'utf8');
 
-  res.render("timeseries",{
-    TempDatum:JSON.stringify(JSON.parse(TempData).data),
-    HumDatum:JSON.stringify(JSON.parse(HumData).data)
-  });
+  // res.render("timeseries",{
+  //   TempDatum:JSON.stringify(JSON.parse(TempData).data),
+  //   HumDatum:JSON.stringify(JSON.parse(HumData).data)
+  // });
 
-  // var Tempurl = 'https://q.nqminds.com/v1/datasets/HJlZCrb9t/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":27795}';
-  // var Humurl = 'https://q.nqminds.com/v1/datasets/SygcmLb5K/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":27795}';
-  // RetriveData(Tempurl,function(err,TempData){
-  //   if(!err){
-  //     RetriveData(Humurl,function(err,HumData){
-  //       if(!err){
-  //             res.render("timeseries",{
-  //             TempDatum:JSON.stringify(TempData.data),
-  //             HumDatum:JSON.stringify(HumData.data)
-  //           });
-  //       }
-  //     })
-  //   }
-  // })
+  var Tempurl = 'https://q.nqminds.com/v1/datasets/Sylsda0Un/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":20000}';
+  var EMCurl = 'https://q.nqminds.com/v1/datasets/BklEbvkv2/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":20000}';
+  RetriveData(Tempurl,function(err,TempData){
+    if(!err){
+      RetriveData(EMCurl,function(err,EMCData){
+        if(!err){
+              res.render("timeseries",{
+              TempDatum:JSON.stringify(TempData.data),
+              EMCDatum:JSON.stringify(EMCData.data)
+            });
+        }
+      })
+    }
+  })
 });
 app.get('/refresh',function(req,res){
    /*
@@ -111,8 +111,8 @@ app.get('/refresh',function(req,res){
   //   HumDatum:JSON.stringify(JSON.parse(HumData).data)
   // });
   
-  var Tempurl = 'https://q.nqminds.com/v1/datasets/HJlZCrb9t/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":20000}';
-  var Humurl = 'https://q.nqminds.com/v1/datasets/SygcmLb5K/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":20000}';
+  var Tempurl = 'https://q.nqminds.com/v1/datasets/Sylsda0Un/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":20000}';
+  var EMCurl = 'https://q.nqminds.com/v1/datasets/BklEbvkv2/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":20000}';
   RetriveData(Tempurl,function(err,TempData){
     if(!err){
       RetriveData(Humurl,function(err,HumData){
