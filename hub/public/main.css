@@ -327,7 +327,13 @@ body {
   box-sizing: border-box;
   background-color: white; }
 
-
+.BPchart{
+  width: calc(100% - 2px);
+}
+#BPsvg{
+  background-color: white;
+  height:200px;
+}
 .charts-whole {
   width: calc(95% - 30px); }
 

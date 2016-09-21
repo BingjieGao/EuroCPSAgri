@@ -84,16 +84,20 @@ app.get('/timeseries',function(req,res){
   //   HumDatum:JSON.stringify(JSON.parse(HumData).data)
   // });
 
-  var Tempurl = 'https://q.nqminds.com/v1/datasets/Sylsda0Un/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":20000}';
-  var EMCurl = 'https://q.nqminds.com/v1/datasets/BklEbvkv2/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":20000}';
+  var Tempurl = 'https://q.nqminds.com/v1/datasets/Sylsda0Un/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":40000}';
+  var EMCurl = 'https://q.nqminds.com/v1/datasets/BklEbvkv2/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":40000}';
+  var CFGurl = "https://q.nqminds.com/v1/datasets/SJe5yltRn/data";
   RetriveData(Tempurl,function(err,TempData){
     if(!err){
       RetriveData(EMCurl,function(err,EMCData){
         if(!err){
-              res.render("timeseries",{
+          RetriveData(CFGurl,function(err,CFGData){
+             res.render("timeseries",{
               TempDatum:JSON.stringify(TempData.data),
-              EMCDatum:JSON.stringify(EMCData.data)
-            });
+              EMCDatum:JSON.stringify(EMCData.data),
+              CFGDatum: JSON.stringify(CFGData.data[0])
+            })
+          });
         }
       })
     }

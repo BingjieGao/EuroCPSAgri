@@ -10,9 +10,9 @@
 
     <script src="d3.v3.min.js" charset="utf-8"></script>
     <script src="jquery-ui.min.js"></script>
-    <!-- d3-tooltip script -->
     <!--*****************************************************************************-->
 <!-- 	<script src="timeline.js"></script> -->
+    <script src="GDryerNN.js"></script>
     <script src="brush.js"></script>
     <script>
     $( function() {
@@ -55,10 +55,13 @@
         main bar chart for current data
         -->
         <div class="sidebar">
-
             <div class="sidebar-column" id="add-range">
                 <span class="material-icons">add_box</span>
                 <div style="display:inline-block;overflow: hidden;text-overflow:ellipsis;">Add Display Range</div>
+            </div>
+            <div id="BPchart" class="charts BPchart">
+                    <div class="chart-header">BP value</div>
+                    <div id="BPsvg" class="chart-svg"></div>
             </div>
         </div>
 <!-- ************************************************************ -->
@@ -74,22 +77,6 @@
         <!-- ************************************************************ -->
         <!-- 	<div class="clearfix"></div> -->
             <div class="slider" id="time-bar"></div>
-            <div class="dropdown">
-                <button class="dropbtn">FAN Side</button>
-                <div class="dropdown-content">
-                    <div id="disF_left">LEFT</div>
-                    <div id="disF_middle">MIDDLE</div>
-                    <div id="disF_right">RIGHT</div>
-                  </div>
-            </div>
-            <div class="dropdown">
-                <button class="dropbtn">Dryer Side</button>
-                <div class="dropdown-content">
-                    <div id="disD_left">LEFT</div>
-                    <div id="disD_middle">MIDDLE</div>
-                    <div id="disD_right">RIGHT</div>
-                  </div>
-            </div>
             <div class="clearfix"></div>
             
             <div class="draw">
@@ -267,9 +254,8 @@
     /***********************************************************************************/
     var gTempData = <%-TempDatum%>
     var gEMCData = <%-EMCDatum%>
-
-
-
+    var gCFGData = <%-CFGDatum%>
+    console.log(gCFGData);
     var arrayIntersect = function(a, b)
     {
         return $.grep(a, function(i)
@@ -279,17 +265,17 @@
     };
 
     $(document).ready(function(){
-        draw(gALL,null,null,false);
+        draw(gALL,null,null,false,gCFGData);
     });
     $( window ).resize(function() {
         var width = $(window).width();
         d3.selectAll('svg').remove();
         var whole = gdisplay_par>0.9?true:false;
-        draw(gdisplay_array,null,null,whole);
+        draw(gdisplay_array,null,null,whole,gCFGData);
     })
 
 
-    function draw(display_array,TempData,EMCData,whole){
+    function draw(display_array,TempData,EMCData,whole,CFGData){
         var display_par;
         gdisplay_array = display_array;
 
@@ -332,12 +318,12 @@
                     newTime = gTempData[i]['timestamp'];
                 }
                 else{
-                    for(var j=0;j<24;j++){
+                    for(var j=0;j<8;j++){
                         var newObj = {};
                         newObj['timestamp'] = newTime-1000*20;
                         newObj['Temp'] = null;
                         newObj['EMC'] = null;
-                        newObj['sensorId'] = j+1;
+                        newObj['sensorId'] = gALL[j]+1;
                         timestamp_array.push(newObj);
                         newTime -= 1000*20; 
                     }
@@ -358,8 +344,21 @@
         console.log("chart width is => "+width);
         d3.selectAll('svg').remove();
         for(var i=0;i<display_array.length;i++){
-            CreatePlots(width,timestamp_array,display_array[i],display_array,gRanges);
+            CreatePlots(width,timestamp_array,display_array[i],display_array,gRanges,gCFGData);
         }
+
+        var BPcircle_width = $(window).width()*0.15 - 10;
+    
+        var BPcircle = d3.select("#BPsvg").append("svg")
+                    .attr('width',173)
+                    .attr('height',200)
+        var BPcircleEle = BPcircle.append('g')
+                                .attr('id','BPValueText')
+        BPcircleEle.append('circle')
+            .attr('transform','translate(86.5,100)')
+            .attr('r',86)
+            .attr('stroke','transparent')
+            .attr('fill','#00bcd4')
         // var slider_width = window_width*display_par - 15;
         // TimeLine(slider_width,gTempData,display_array,width,gRanges);
     }
@@ -398,14 +397,14 @@
 
             setTimeout(function(){
                 $('.sidebar').removeClass('inactive');
-                setTimeout(draw(gdisplay_array,null,null,false),3000);
+                setTimeout(draw(gdisplay_array,null,null,false,gCFGData),3000);
             })
 
         }
         else{
             $('.sidebar').addClass('inactive');
             main.addClass('whole');
-            setTimeout(draw(gdisplay_array,null,null,true),1000);
+            setTimeout(draw(gdisplay_array,null,null,true,gCFGData),1000);
         }
     });
     /*--------------------------------------------------------------------------------*/
@@ -437,134 +436,12 @@
         d3.selectAll('svg').remove();
         gRanges = this_ranges;
         var whole = gdisplay_par>0.9?true:false;
-        draw(gdisplay_array,null,null,whole);
+        draw(gdisplay_array,null,null,whole,gCFGData);
         
         form4.css('display','none');
         add_range.removeClass('sidebar-active');
         gdisplay_class.addClass('sidebar-active');
     })
-</script>
-<script>
-    var rightSelector = $('#select-right');
-    var leftSelector = $('#select-left');
-    var middleSelector = $('#select-middle');
-    var fanSelector = $('#select-fan');
-    var dryerSelector = $('#select-dryer');
-
-    rightSelector.click(function(){
-        var new_display = arrayIntersect(gdisplay_side,gRIGHT);
-        console.log(new_display);
-        if(new_display.length > 0) {
-            d3.selectAll('svg').remove();
-            $('.charts').addClass('charts-hidden');
-
-            draw(new_display, null, null, false);
-        }
-    });
-
-    leftSelector.click(function(){
-        var new_display = arrayIntersect(gdisplay_side,gLEFT);
-        if(new_display.length > 0) {
-            d3.selectAll('svg').remove();
-            $('.charts').addClass('charts-hidden');
-
-            draw(new_display, null, null, false);
-        }
-    });
-
-    middleSelector.click(function(){
-        var new_display = arrayIntersect(gdisplay_side,gMIDDLE);
-        if(new_display.length > 0) {
-            d3.selectAll('svg').remove();
-            $('.charts').addClass('charts-hidden');
-
-            draw(new_display, null, null, false);
-        }
-    });
-
-    fanSelector.click(function(){
-        d3.selectAll('svg').remove();
-        $('.charts').addClass('charts-hidden');
-        var new_display = arrayIntersect(gdisplay_side,gFAN);
-        draw(new_display,null,null,false);
-    });
-
-    dryerSelector.click(function(){
-        var new_display = arrayIntersect(gdisplay_side,gDRYER);
-        if(new_display.length > 0) {
-            d3.selectAll('svg').remove();
-            $('.charts').addClass('charts-hidden');
-            draw(new_display, null, null, false);
-        }
-    });
-</script>
-<script>
-$('#disF_left').click(function(){
-    console.log('click');
-    var this_display = arrayIntersect(gLEFT,gFAN);
-    gchoiceF = this_display;
-    this_display = gchoiceD.concat(this_display);
-    console.log(this_display);
-    d3.selectAll('svg').remove();
-    $('.charts').addClass('charts-hidden');
-    var whole = gdisplay_par>0.9?true:false;
-    draw(this_display,null,null,whole);
-})
-$('#disF_middle').click(function(){
-    console.log('click');
-    var this_display = arrayIntersect(gMIDDLE,gFAN);
-    gchoiceF = this_display;
-    this_display = gchoiceD.concat(this_display);
-    console.log(this_display);
-    d3.selectAll('svg').remove();
-    $('.charts').addClass('charts-hidden');
-    var whole = gdisplay_par>0.9?true:false;
-    draw(this_display,null,null,whole);
-})
-$('#disF_right').click(function(){
-    console.log('click');
-    var this_display = arrayIntersect(gRIGHT,gFAN);
-    gchoiceF = this_display;
-    this_display = gchoiceD.concat(this_display);
-    console.log(this_display);
-    d3.selectAll('svg').remove();
-    $('.charts').addClass('charts-hidden');
-    var whole = gdisplay_par>0.9?true:false;
-    draw(this_display,null,null,whole);
-})
-$('#disD_left').click(function(){
-    console.log('click');
-    var this_display = arrayIntersect(gLEFT,gDRYER);
-    gchoiceD = this_display;
-    this_display = gchoiceF.concat(this_display);
-    console.log(this_display);
-    d3.selectAll('svg').remove();
-    $('.charts').addClass('charts-hidden');
-    var whole = gdisplay_par>0.9?true:false;
-    draw(this_display,null,null,whole);
-})
-$('#disD_middle').click(function(){
-    console.log('click');
-    var this_display = arrayIntersect(gMIDDLE,gDRYER);
-    gchoiceD = this_display;
-    this_display = gchoiceF.concat(this_display);
-    console.log(this_display);
-    d3.selectAll('svg').remove();
-    $('.charts').addClass('charts-hidden');
-    var whole = gdisplay_par>0.9?true:false;
-    draw(this_display,null,null,whole);
-})
-$('#disD_right').click(function(){
-    console.log('click');
-    var this_display = arrayIntersect(gRIGHT,gDRYER);
-    gchoiceD = this_display;
-    this_display = gchoiceF.concat(this_display);
-    console.log(this_display);
-    d3.selectAll('svg').remove();
-    $('.charts').addClass('charts-hidden');
-    var whole = gdisplay_par>0.9?true:false;
-    draw(this_display,null,null,whole);
-})
 </script>
 <script>
     /*
