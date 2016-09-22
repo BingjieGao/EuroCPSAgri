@@ -355,7 +355,11 @@ body {
 
 .chart-svg {
   margin: 15px 20px 0px 20px; }
-
+.middle{
+  width:100%;
+  margin:auto;
+  max-width:1200px;
+}
 .axis path, .axis line {
   fill: none;
   stroke: #000;

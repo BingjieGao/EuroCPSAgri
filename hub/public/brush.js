@@ -8,7 +8,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData,
   var width = width_original - margin.left - margin.right;
   var height = heightAll - margin.top - margin.bottom;
   var height2 = (heightAll * 0.2) >35?35:(heightAll*0.2);
-
+  console.log('chart width is '+width);
   var dataset1_array = [];
   var dates_array = [];
   var Tvalue_array = [];
