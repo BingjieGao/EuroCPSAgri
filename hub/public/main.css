@@ -308,32 +308,35 @@ body {
   right: 0;
   margin-top: 71px; }
 
-.chart-header {
+#chart-header,#chart-header2 {
   width: 100%;
-  height: 35px;
+  height: 30px;
   background-color: #424242;
   color: #90caf9;
-  padding: 8px 0px 0px 10px;
+  padding: 8px 10px 0px 10px;
   font-size: 14px;
   font-weight: 500;
-  box-sizing: border-box; }
+  box-sizing: border-box;
+ }
+ .chart-header{
+   width: 100%;
+   height: 10px;
+   background-color: #e0e0e0;
+   padding: 8px 10px 0px 10px;
+   box-sizing: border-box;
+  }
 
 .charts {
   background-color: transparent;
   margin: 0px auto;
-  margin-top: 20px;
+  margin-top: 0px;
   padding: 0 auto;
   border: 0px solid black;
   box-sizing: border-box;
   background-color: white; }
-
-.BPchart{
-  width: calc(100% - 2px);
-}
-#BPsvg{
-  background-color: white;
-  height:70px;
-}
+  .first-charts{
+    margin-top: 8px;
+  }
 .charts-whole {
   width: calc(95% - 30px); }
 

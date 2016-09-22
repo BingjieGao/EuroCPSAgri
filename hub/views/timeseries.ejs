@@ -49,6 +49,47 @@
         </div>
         <div class="close"></div>
     </div>
+    <div class="form-container2">
+        <div class="form">
+            <h3>Add Grain Type</h3>
+            <div class="form-content">
+                <div id="grain-type">
+                    <form>
+                        <label>ADD Grain Type</label>
+                        <input type="text" name="grain-type" required>
+                        <div class="warning" id="grainerror">This field should not be left blank</div>
+                    </form>
+                </div>
+            </div>
+            <div class="submit-button" id="submit-button2"><span>Submit</span></div>
+            <div class="cancel-button" id="cancel-button2"><span>Cancel</span></div>
+        </div>
+        <div class="close"></div>
+    </div>
+    <div class="form-container1">
+    <div class="form">
+    <h3>Add moisture content</h3>
+        <div class="form-content">
+            <div id="moisture">
+                <form>
+                <label>moisture</label>
+                <input type="number" name="moisture" required>
+                 <div class="warning" id="moistureerror">This field should be a number</div>
+                </form>
+            </div>
+            <div class="clearfix"></div>
+            <div id="time">
+                <label>timestamp</label>
+                <input type="text" id="datepicker" name="date" required />
+                <input type="time" style="overflow:hidden" name="time" step="1" id="timepicker" required />
+            </div>
+
+        </div>
+        <div class="submit-button" id="submit-button"><span>Submit</span></div>
+        <div class="cancel-button" id="cancel-button"><span>Cancel</span></div>
+    </div>
+    <div class="close"></div>
+</div>
     <div class="clearfix"></div>
     <div class="container">
         <!--
@@ -59,9 +100,13 @@
                 <span class="material-icons">add_box</span>
                 <div style="display:inline-block;overflow: hidden;text-overflow:ellipsis;">Add Display Range</div>
             </div>
-            <div id="BPchart" class="charts BPchart">
-                    <div class="chart-header">BP value</div>
-                    <div id="BPsvg" class="chart-svg"></div>
+            <div class="sidebar-column" id="add-type">
+                <span class="material-icons">add_box</span>
+                <div style="display:inline-block;overflow: hidden;text-overflow:ellipsis;">Add Grain Type</div>
+            </div>
+            <div class="sidebar-column" id="add">
+                <span class="material-icons">add_box</span>
+                <div style="display:inline-block;overflow: hidden;text-overflow:ellipsis;">Add Moisture</div>
             </div>
         </div>
 <!-- ************************************************************ -->
@@ -76,42 +121,46 @@
             </div>
         <!-- ************************************************************ -->
         <!-- 	<div class="clearfix"></div> -->
-            <div class="slider" id="time-bar"></div>
+
             <div class="clearfix"></div>
-            
+
             <div class="draw">
-                <div id="chart22" class="charts charts-hidden">
-                    <div class="chart-header">FAN Right Top</div>
+                <div id="chart22" class="charts first-charts charts-hidden">
+                    <div id="chart-header">
+                      <div style="float:left">FAN </div>
+                      <div id="BPValue" style="float:right;padding-right:8">Expected EMC: </div>
+                    </div>
+                    <div style="clear: both;"></div>
                     <div id="chart22-svg" class="chart-svg"></div>
-                </div>  
+                </div>
             <!-- ************************************************************ -->
                 <div id="chart23" class="charts charts-hidden">
-                    <div class="chart-header">FAN Middle Top</div>
+                    <div class="chart-header">FAN Top</div>
                     <div id="chart23-svg" class="chart-svg"></div>
                 </div>
             <!-- ************************************************************ -->
                 <div id="chart24" class="charts charts-hidden">
-                    <div class="chart-header">FAN Left Top</div>
+                    <div class="chart-header">FAN Top</div>
                     <div id="chart24-svg" class="chart-svg"></div>
                 </div>
             <!-- ************************************************************ -->
                 <div id="chart19" class="charts charts-hidden">
-                    <div class="chart-header">FAN right 2nd</div>
+                    <div class="chart-header"></div>
                     <div id="chart19-svg" class="chart-svg"></div>
                 </div>
             <!-- ************************************************************ -->
                 <div id="chart21" class="charts charts-hidden">
-                    <div class="chart-header">FAN Left 2nd</div>
+                    <div class="chart-header">FAN 2nd</div>
                     <div id="chart21-svg" class="chart-svg"></div>
                 </div>
-            <!-- ************************************************************ --> 
+            <!-- ************************************************************ -->
                 <div id="chart20" class="charts charts-hidden">
-                    <div class="chart-header">FAN Middle 2nd</div>
+                    <div class="chart-header">FAN 2nd</div>
                     <div id="chart20-svg" class="chart-svg"></div>
-                </div>   
+                </div>
             <!-- ************************************************************ -->
                 <div id="chart16" class="charts charts-hidden">
-                    <div class="chart-header">FAN Right 3rd</div>
+                    <div class="chart-header"></div>
                     <div id="chart16-svg" class="chart-svg"></div>
                 </div>
             <!-- ************************************************************ -->
@@ -124,9 +173,9 @@
                     <div class="chart-header">FAN Left 3rd</div>
                     <div id="chart18-svg" class="chart-svg"></div>
                 </div>
-            <!-- ************************************************************ --> 
+            <!-- ************************************************************ -->
                 <div id="chart13" class="charts charts-hidden">
-                    <div class="chart-header">FAN Right Bottom</div>
+                    <div class="chart-header"></div>
                     <div id="chart13-svg" class="chart-svg"></div>
                 </div>
             <!-- ************************************************************ -->
@@ -141,22 +190,22 @@
                 </div>
             </div>
             <!-- ************************************************************ -->
-        
-            
+
+
         <!-- ************************************************************ -->
             <div class="draw">
                 <div id="chart10" class="charts charts-hidden">
                     <div class="chart-header">Dryer Right Top</div>
                     <div id="chart10-svg" class="chart-svg"></div>
                 </div>
-            <!-- ************************************************************ -->    
+            <!-- ************************************************************ -->
                 <div id="chart12" class="charts charts-hidden">
                     <div class="chart-header">Dryer Left Top</div>
                     <div id="chart12-svg" class="chart-svg"></div>
                 </div>
             <!-- ************************************************************ -->
-                <div id="chart11" class="charts charts-hidden">
-                    <div class="chart-header">Dryer Middle Top</div>
+                <div id="chart11" class="charts first-charts charts-hidden">
+                    <div id="chart-header2">DRYER</div>
                     <div id="chart11-svg" class="chart-svg"></div>
                 </div>
             <!-- ************************************************************ -->
@@ -166,7 +215,7 @@
                 </div>
             <!-- ************************************************************ -->
                 <div id="chart8" class="charts charts-hidden">
-                    <div class="chart-header">Dryer Middle 2nd</div>
+                    <div class="chart-header"></div>
                     <div id="chart8-svg" class="chart-svg"></div>
                 </div>
             <!-- ************************************************************ -->
@@ -182,11 +231,11 @@
                 <!-- <div class="clearfix"></div> -->
             <!-- ************************************************************ -->
                 <div id="chart5" class="charts charts-hidden">
-                    <div class="chart-header">Dryer Middle 3rd</div>
+                    <div class="chart-header"></div>
                     <div id="chart5-svg" class="chart-svg"></div>
                 </div>
             <!-- ************************************************************ -->
-            
+
             <!-- ************************************************************ -->
                 <div id="chart6" class="charts charts-hidden">
                     <div class="chart-header">Dryer Left 3rd</div>
@@ -198,10 +247,10 @@
                     <div class="chart-header">Dryer Right Bottom</div>
                     <div id="chart1-svg" class="chart-svg"></div>
                 </div>
-            
+
 
                 <div id="chart2" class="charts charts-hidden">
-                    <div class="chart-header">Dryer Middle Bottom</div>
+                    <div class="chart-header"></div>
                     <div id="chart2-svg" class="chart-svg"></div>
                 </div>
             <!-- ************************************************************ -->
@@ -307,7 +356,7 @@
         var formatDate = d3.time.format("%c");
         var maxSec = new Date(gTempData[0]['timestamp']);
         var minSec = new Date(gTempData[gTempData.length-1]['timestamp']);
-        var buckets = d3.time.seconds(minSec,maxSec,20); 
+        var buckets = d3.time.seconds(minSec,maxSec,20);
         /*
         * get JsonData from
         */
@@ -332,7 +381,7 @@
                         newObj['EMC'] = null;
                         newObj['sensorId'] = gALL[j]+1;
                         timestamp_array.push(newObj);
-                        newTime -= 1000*20; 
+                        newTime -= 1000*20;
                     }
                 }
             }
@@ -353,14 +402,6 @@
         for(var i=0;i<display_array.length;i++){
             CreatePlots(width,timestamp_array,display_array[i],display_array,gRanges,gCFGData,myBP);
         }
-
-        var BPcircle_width = $(window).width()*0.15 - 10;
-    
-        var BPcircle = d3.select("#BPsvg").append("svg")
-                    .attr('width',173)
-                    .attr('height',70)
-        var BPcircleEle = BPcircle.append('g')
-                                .attr('id','BPValueText')
         // BPcircleEle.append('circle')
         //     .attr('transform','translate(86.5,100)')
         //     .attr('r',86)
@@ -416,6 +457,81 @@
     });
     /*--------------------------------------------------------------------------------*/
     /*
+    *Add moisture
+    */
+    var add = $('#add');
+    var form = $('.form-container1');;
+    add.click(function(){
+        console.log('click');
+        $('.form-container1').css('display','block');
+        var date = new Date();
+        var date_array = date.toISOString().split('T');
+        var dateString = '';
+        //date_array = date_array[0].replace(/-/g,'/');
+        date_array = date_array[0].split('-');
+        dateString = date_array[1]+'/'+date_array[2]+'/'+date_array[0];
+        document.getElementById('timepicker').value = date.toTimeString().substr(0,5);
+        document.getElementById('datepicker').value = dateString;
+    })
+
+    var cancel = $('.cancel-button');
+    var submit = $('#submit-button');
+    var moisture = $('input[name=moisture]');
+    /*
+    * bind input event
+    */
+    moisture.bind("input propertychange",function(){
+        if( !parseFloat($(this).val())|| $(this).val() == ''){
+            $('#moistureerror').css('display','block');
+            console.log('moisture should be number');
+        }
+        else{
+            $('#moistureerror').css('display','none');
+        }
+    })
+    console.log(parseFloat(moisture));
+    cancel.click(function(){
+        $("div[class*='form-container']").css('display','none');
+        $('.sidebar-active').removeClass('sidebar-active');
+        gdisplay_class.addClass('sidebar-active');
+    })
+    submit.click(function(){
+        var moisture = $('input[name=moisture]').val();
+        if(parseFloat(moisture)) {
+            var date = $('input[name=date]').val();
+            var time = $('input[name=time]').val();
+            console.log('date is =>');
+            console.log(date);
+            console.log(time);
+            date_array = date.split('/');
+            date = date_array[2] + '-' + date_array[0] + '-' + date_array[1] + 'T';
+            date = date_array[2] + '-' + date_array[0] + '-' + date_array[1] + 'T';
+            var timestamp = new Date(date + time).getTime() / 1000;
+            console.log(date + time);
+            console.log(new Date(date + time));
+            console.log(timestamp);
+            var data = {"timestamp":timestamp, "moisture": parseFloat(moisture)};
+            console.log(data);
+            $.ajax({
+                type: "POST",
+                url: "/moisture",
+                contentType:"application/json; charset=utf-8",
+                dataType:"json",
+                data: JSON.stringify(data),
+                success: function () {
+                    console.log('moisture added');
+                    form.css('display', 'none');
+                    add.removeClass('sidebar-active');
+                    gdisplay_class.addClass('sidebar-active');
+                }
+            })
+        }
+        else{
+            $('#moistureerror').css('display','block');
+        }
+    });
+    /*---------------------------------------------------------------------------------*/
+    /*
     * Add input range
     */
     var add_range = $('#add-range');
@@ -444,11 +560,45 @@
         gRanges = this_ranges;
         var whole = gdisplay_par>0.9?true:false;
         draw(gdisplay_array,null,null,whole,gCFGData,myBP);
-        
+
         form4.css('display','none');
         add_range.removeClass('sidebar-active');
         gdisplay_class.addClass('sidebar-active');
     })
+    /*
+    * Add Grain type
+    */
+    var form2 = $('.form-container2');
+    var submit2 = $('#submit-button2');
+    $('#add-type').click(function(){
+        form2.css('display','block');
+    });
+    $('#submit-button2').click(function(){
+        var grain_type = $('input[name=grain-type]').val();
+        console.log(grain_type);
+        if(grain_type == '' || grain_type.length<0 ){
+            $('#grainerror').css('display','block');
+        }
+        else {
+            grain_data = {"timestamp": new Date().getTime(), "type": grain_type};
+            $.ajax({
+                type: "POST",
+                url: "/graintype",
+                contentType:"application/json; charset=utf-8",
+                dataType:"json",
+                data: JSON.stringify(grain_data),
+                success: function () {
+                    console.log('new type added');
+                    form2.css('display', 'none');
+                }
+            })
+        }
+    })
+    /*-------------------------------------------------------------------------------------------*/
+    /*
+    *Add moisture
+    */
+
 </script>
 <script>
     /*

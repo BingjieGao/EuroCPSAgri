@@ -2,12 +2,12 @@
 
 function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData,myBP){
   //global variables of CreatePlots
-  var margin = {top: 20, right: 150, bottom: 120, left: 45};
-  var margin2 = {top:0.8,right:10,bottom: 20,left:40};
-  var heightAll = width_original /300*150 - 25;
+  var margin = {top: 5, right: 150, bottom: 70, left: 45};
+  var margin2 = {right:10,bottom: 5,left:40};
+  var heightAll = width_original /280*100 - 25;
   var width = width_original - margin.left - margin.right;
   var height = heightAll - margin.top - margin.bottom;
-  var height2 = (heightAll * 0.2) >70?70:(heightAll*0.2);
+  var height2 = (heightAll * 0.2) >35?35:(heightAll*0.2);
 
   var dataset1_array = [];
   var dates_array = [];
@@ -117,7 +117,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData,
   var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left")
-    .ticks(6);
+    .ticks(5);
   var yAxis2 = d3.svg.axis()
     .scale(y2)
     .orient("right")
@@ -154,19 +154,19 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData,
     .attr("transform", "translate(" + (width+10)+ " ,70)");
 
   label.append("text")
-    .attr("transform", "translate(" + 15+ ","+(height-30)+")")
+    .attr("transform", "translate(" + 15+ ","+(height-45)+")")
     .attr("id","temp-label")
     .text("Celsius: ")
   label.append("text")
     .style("text-anchor","start")
-    .attr("transform", "translate(" + 15+ ","+(height)+")")
+    .attr("transform", "translate(" + 15+ ","+(height-20)+")")
     .attr("id","hum-label")
-    .text("RH: ")
+    .text("EMC: ")
   var legend1 = label.append("rect")
     .attr('class','legend-box')
     .attr("width", 10)
     .attr("height", 10)
-    .attr("transform", "translate(" + 0+ " ,"+(height-40)+")")
+    .attr("transform", "translate(" + 0+ " ,"+(height-55)+")")
     .style("text-anchor","start")
     .style('fill','red')
     .on('mouseover',function(){
@@ -193,7 +193,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData,
     .attr('class','legend-box')
     .attr("width", 10)
     .attr("height", 10)
-    .attr("transform", "translate(" + 0+ " ,"+(height-10)+")")
+    .attr("transform", "translate(" + 0+ " ,"+(height-30)+")")
     .style("text-anchor","start")
     .style('fill','steelblue')
     .on('mouseover',function(){
@@ -230,7 +230,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData,
 
   /*
    * *** draw the mark Line*********************************************************************
-   */ 
+   */
   if(ranges == null || ranges.TimeMax == null || ranges.TimeMin == null){
     var MarkValue, timeLabel;
     Xtranslate = width*0.8 - x(lastestDate);
@@ -246,9 +246,9 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData,
       }
     }
     svg.select('#temp-label').text('Celsius: '+timeDataObj['Temp']+'°C');
-    svg.select('#hum-label').text('RH: '+timeDataObj['EMC']);
+    svg.select('#hum-label').text('EMC: '+timeDataObj['EMC']);
     svg.selectAll(".x.axis").call(xAxis)
-      .selectAll('text').attr("transform", "translate("+10+",0),rotate(-45)");
+      .selectAll('text').attr("transform", "translate("+10+",0),rotate(-20)");
   }
   //console.log(Xtranslate);
   /**********************************************************************************/
@@ -266,7 +266,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData,
     .attr("transform", "translate(0," + height + ")")
     .call(xAxis)
     .selectAll('text')
-    .attr("transform", "translate("+5+",0),rotate(-45)");
+    .attr("transform", "translate("+5+",0),rotate(-20)");
 
 
   mainchart.append("g")
@@ -336,7 +336,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData,
       svg.selectAll(".tooltip").remove();
       drawDateLabel(tipdata.timestamp);
       svg.select('#temp-label').text('Celsius: '+tipdata['Temp']+'°C');
-      svg.select('#hum-label').text('RH: '+tipdata['EMC']);
+      svg.select('#hum-label').text('EMC: '+tipdata['EMC']);
       ;
     }
   })
@@ -475,7 +475,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData,
 
   var context = svg.append('g')
     .attr('class','context')
-    .attr("transform", "translate(" + margin2.left + "," + (heightAll-100) + ")");
+    .attr("transform", "translate(" + margin2.left + "," + (heightAll-60) + ")");
 
   context.append("path")
     .datum(dataset1_array)
@@ -495,17 +495,16 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData,
 
   context.append("g")
     .attr("class", "x axis")
-    .attr("transform", "translate(0," + height2 + ")")
+    .attr("transform", "translate(0," +height2 + ")")
     .call(xAxis2)
     .selectAll('text')
-    .attr("transform", "translate("+5+",0),rotate(-45)");;
+    .attr("transform", "translate("+5+",0),rotate(-20)");;
 
   context.append("g")
     .attr("class", "x brush")
     .call(brush)
     .selectAll("rect")
-    .attr("y", 10)
-    .attr("height", height2-10);
+    .attr("height", height2);
 
 
   /***********************************************functions*********************************/
@@ -541,11 +540,8 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData,
           var BPValue = findBPNN(click_date.getTime());
           console.log(BPValue);
           if(BPValue[0]['output'][0] != 0){
-          	d3.select('#BPValueText').select('text').remove();
-	          d3.select('#BPValueText').append('text')
-	          	.attr('dy',35)
-	          	.text(BPValue[0]['output'][0])
-	          	.attr('fill','#00bcd4');
+          	document.getElementById('BPValue').innerHTML = "Expected EMC: ";
+            document.getElementById('BPValue').innerHTML += BPValue[0]['output'][0].toFixed(2);
           }
           if(click_data.length>0){
             for(var i=0;i<display_array.length;i++){
@@ -554,7 +550,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData,
                 return o['sensorId'] === display_array[i]+1;
               })
               var thisArray = findIndex(TempData,display_array[i]);
-              
+
               var click_temp = clickObj===undefined?findNearest(click_date.getTime(),thisArray)['Temp']:clickObj['Temp'];
               var click_EMC = clickObj===undefined?findNearest(click_date.getTime(),thisArray)['EMC']:clickObj['EMC'];
               click_svg.select('#temp-label').text('Celsius: '+click_temp+'°C');
@@ -606,22 +602,19 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData,
           var click_data = findTimeData(click_date.getTime(),null);
           var BPValue = findBPNN(click_date.getTime());
           console.log(BPValue);
-         
+
           if(BPValue[0]['output'][0] != 0){
-          	d3.select('#BPValueText').select('text').remove();
-	          d3.select('#BPValueText').append('text')
-	          	.attr('dy',35)
-	          	.text(BPValue[0]['output'][0])
-	          	.attr('fill','#00bcd4');
+            document.getElementById('BPValue').innerHTML = "Expected EMC: ";
+            document.getElementById('BPValue').innerHTML += BPValue[0]['output'][0].toFixed(2);
           }
           if(click_data.length>0){
             for(var i=0;i<display_array.length;i++){
               var click_svg = d3.select('#svg'+(display_array[i]+1).toString());
               var clickObj = click_data.find(function(o){
                 return o['sensorId'] === display_array[i]+1;
-              }) 
+              })
               var thisArray = findIndex(TempData,display_array[i]);
-             
+
               var click_temp = clickObj===undefined?findNearest(click_date.getTime(),thisArray)['Temp']:clickObj['Temp'];
               var click_EMC = clickObj===undefined?findNearest(click_date.getTime(),thisArray)['EMC']:clickObj['EMC'];
               click_svg.select('#temp-label').text('Celsius: '+click_temp+'°C');
@@ -646,13 +639,10 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData,
           var click_data = findTimeData(click_date.getTime(),null);
           var BPValue = findBPNN(click_date.getTime());
           console.log(BPValue);
-         
-          if(BPValue[0]['output'][0] != 0){ 
-          	d3.select('#BPValueText').select('text').remove();
-	          d3.select('#BPValueText').append('text')
-	          	.attr('dy',35)
-	          	.text(BPValue[0]['output'][0])
-	          	.attr('fill','#00bcd4');
+
+          if(BPValue[0]['output'][0] != 0){
+            document.getElementById('BPValue').innerHTML = "Expected EMC: ";
+            document.getElementById('BPValue').innerHTML += BPValue[0]['output'][0].toFixed(2);
           }
           if(click_data.length>0){
             for(var i=0;i<display_array.length;i++){
@@ -692,7 +682,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData,
     Xtranslate = 0;
 
     svg.select(".x.axis").call(xAxis)
-      .selectAll('text').attr("transform", "translate("+8+",0),rotate(-45)");
+      .selectAll('text').attr("transform", "translate("+8+",0),rotate(-20)");
 
     svg.selectAll(".y.axis").call(yAxis);
 
@@ -759,7 +749,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData,
     svg.select(".hum-line").attr("d", CreateHum);
     svg.select('.temp-line').attr("d",CreateTemp);
     svg.selectAll(".x.axis").call(xAxis)
-      .selectAll('text').attr("transform", "translate("+10+",0),rotate(-45)");
+      .selectAll('text').attr("transform", "translate("+10+",0),rotate(-20)");
     for(var i=0;i<display_array.length;i++){
       if(display_array[i] != index) {
         var this_svg = d3.select('#svg' + (display_array[i] + 1).toString());
