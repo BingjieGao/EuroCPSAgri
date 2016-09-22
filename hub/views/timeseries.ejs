@@ -255,7 +255,14 @@
     var gTempData = <%-TempDatum%>
     var gEMCData = <%-EMCDatum%>
     var gCFGData = <%-CFGDatum%>
-    console.log(gCFGData);
+    //console.log(gCFGData);
+    var GDrayerNN = document.createElement("script");
+
+    GDrayerNN.type = "text/javascript";
+    GDrayerNN.src = "GDrayerNN.js";
+
+    document.body.appendChild(GDrayerNN);
+    var myBP = new GDryerNN(gCFGData);
     var arrayIntersect = function(a, b)
     {
         return $.grep(a, function(i)
@@ -265,17 +272,17 @@
     };
 
     $(document).ready(function(){
-        draw(gALL,null,null,false,gCFGData);
+        draw(gALL,null,null,false,gCFGData,myBP);
     });
     $( window ).resize(function() {
         var width = $(window).width();
         d3.selectAll('svg').remove();
         var whole = gdisplay_par>0.9?true:false;
-        draw(gdisplay_array,null,null,whole,gCFGData);
+        draw(gdisplay_array,null,null,whole,gCFGData,myBP);
     })
 
 
-    function draw(display_array,TempData,EMCData,whole,CFGData){
+    function draw(display_array,TempData,EMCData,whole,CFGData,myBP){
         var display_par;
         gdisplay_array = display_array;
 
@@ -344,21 +351,21 @@
         console.log("chart width is => "+width);
         d3.selectAll('svg').remove();
         for(var i=0;i<display_array.length;i++){
-            CreatePlots(width,timestamp_array,display_array[i],display_array,gRanges,gCFGData);
+            CreatePlots(width,timestamp_array,display_array[i],display_array,gRanges,gCFGData,myBP);
         }
 
         var BPcircle_width = $(window).width()*0.15 - 10;
     
         var BPcircle = d3.select("#BPsvg").append("svg")
                     .attr('width',173)
-                    .attr('height',200)
+                    .attr('height',70)
         var BPcircleEle = BPcircle.append('g')
                                 .attr('id','BPValueText')
-        BPcircleEle.append('circle')
-            .attr('transform','translate(86.5,100)')
-            .attr('r',86)
-            .attr('stroke','transparent')
-            .attr('fill','#00bcd4')
+        // BPcircleEle.append('circle')
+        //     .attr('transform','translate(86.5,100)')
+        //     .attr('r',86)
+        //     .attr('stroke','transparent')
+        //     .attr('fill','#00bcd4')
         // var slider_width = window_width*display_par - 15;
         // TimeLine(slider_width,gTempData,display_array,width,gRanges);
     }
@@ -397,14 +404,14 @@
 
             setTimeout(function(){
                 $('.sidebar').removeClass('inactive');
-                setTimeout(draw(gdisplay_array,null,null,false,gCFGData),3000);
+                setTimeout(draw(gdisplay_array,null,null,false,gCFGData,myBP),3000);
             })
 
         }
         else{
             $('.sidebar').addClass('inactive');
             main.addClass('whole');
-            setTimeout(draw(gdisplay_array,null,null,true,gCFGData),1000);
+            setTimeout(draw(gdisplay_array,null,null,true,gCFGData,myBP),1000);
         }
     });
     /*--------------------------------------------------------------------------------*/
@@ -436,7 +443,7 @@
         d3.selectAll('svg').remove();
         gRanges = this_ranges;
         var whole = gdisplay_par>0.9?true:false;
-        draw(gdisplay_array,null,null,whole,gCFGData);
+        draw(gdisplay_array,null,null,whole,gCFGData,myBP);
         
         form4.css('display','none');
         add_range.removeClass('sidebar-active');
@@ -453,6 +460,11 @@
         $(this).addClass('sidebar-active');
         $(this).siblings().removeClass('sidebar-active');
     });
+    var cancel_button = $("#cancel-button");
+    cancel_button.click(function(){
+        $("div[class*='form-container']").css('display','none');
+        $('.sidebar-active').removeClass('sidebar-active');
+    })
 </script>
 
 </html>

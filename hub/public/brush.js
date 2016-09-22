@@ -1,14 +1,6 @@
 
 
-function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData){
-  var GDrayerNN = document.createElement("script");
-
-  GDrayerNN.type = "text/javascript";
-  GDrayerNN.src = "GDrayerNN.js";
-
-  document.body.appendChild(GDrayerNN);
-  var myBP = new GDryerNN(CFGData);
-
+function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData,myBP){
   //global variables of CreatePlots
   var margin = {top: 20, right: 150, bottom: 120, left: 45};
   var margin2 = {top:0.8,right:10,bottom: 20,left:40};
@@ -548,11 +540,13 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData)
 
           var BPValue = findBPNN(click_date.getTime());
           console.log(BPValue);
-          d3.select('#BPValueText').select('text').remove();
-          d3.select('#BPValueText').append('text')
-          	.attr('dy',100)
-          	.text('BP Value'+BPValue[0]['output'][0])
-          	.attr('fill','red');
+          if(BPValue[0]['output'][0] != 0){
+          	d3.select('#BPValueText').select('text').remove();
+	          d3.select('#BPValueText').append('text')
+	          	.attr('dy',35)
+	          	.text(BPValue[0]['output'][0])
+	          	.attr('fill','#00bcd4');
+          }
           if(click_data.length>0){
             for(var i=0;i<display_array.length;i++){
               var click_svg = d3.select('#svg'+(display_array[i]+1).toString());
@@ -612,11 +606,14 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData)
           var click_data = findTimeData(click_date.getTime(),null);
           var BPValue = findBPNN(click_date.getTime());
           console.log(BPValue);
-          d3.select('#BPValueText').select('text').remove();
-          d3.select('#BPValueText').append('text')
-          	.attr('dy',86)
-          	.text('BP Value'+BPValue[0]['output'][0])
-          	.attr('fill','red');
+         
+          if(BPValue[0]['output'][0] != 0){
+          	d3.select('#BPValueText').select('text').remove();
+	          d3.select('#BPValueText').append('text')
+	          	.attr('dy',35)
+	          	.text(BPValue[0]['output'][0])
+	          	.attr('fill','#00bcd4');
+          }
           if(click_data.length>0){
             for(var i=0;i<display_array.length;i++){
               var click_svg = d3.select('#svg'+(display_array[i]+1).toString());
@@ -649,11 +646,14 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData)
           var click_data = findTimeData(click_date.getTime(),null);
           var BPValue = findBPNN(click_date.getTime());
           console.log(BPValue);
-          d3.select('#BPValueText').select('text').remove();
-          d3.select('#BPValueText').append('text')
-          	.attr('dy',86)
-          	.text('BP Value'+BPValue[0]['output'][0])
-          	.attr('fill','red');
+         
+          if(BPValue[0]['output'][0] != 0){ 
+          	d3.select('#BPValueText').select('text').remove();
+	          d3.select('#BPValueText').append('text')
+	          	.attr('dy',35)
+	          	.text(BPValue[0]['output'][0])
+	          	.attr('fill','#00bcd4');
+          }
           if(click_data.length>0){
             for(var i=0;i<display_array.length;i++){
               var click_svg = d3.select('#svg'+(display_array[i]+1).toString());
@@ -719,7 +719,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData)
     for(var i=0;i<display_array.length;i++){
       if(display_array[i]!=index) {
         d3.select('#svg' + (display_array[i] + 1).toString()).remove();
-        CreatePlots(width_original, TempData, display_array[i],display_array, this_ranges,CFGData);
+        CreatePlots(width_original, TempData, display_array[i],display_array, this_ranges,CFGData,myBP);
       }
     }
     var this_domain = [];
@@ -764,7 +764,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData)
       if(display_array[i] != index) {
         var this_svg = d3.select('#svg' + (display_array[i] + 1).toString());
         this_svg.remove();
-        CreatePlots(width_original, TempData, display_array[i],display_array, this_ranges,CFGData);
+        CreatePlots(width_original, TempData, display_array[i],display_array, this_ranges,CFGData,myBP);
       }
     }
   }
@@ -793,18 +793,19 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData)
     return ans_array;
   }
   function findBPNN(timestamp){
-  	var sensor22 = findTimeData(timestamp,22)['EMC'];
-  	var sensor11 = findTimeData(timestamp,11)['EMC'];
+  	var sensor22 = findTimeData(timestamp,22);
+  	var sensor11 = findTimeData(timestamp,11);
+  	var myout = [{output:[0]}]
   	if(sensor22 !== null && sensor11 !== null){
-  		var inputs = [sensor22,sensor11];
+  		var inputs = [sensor22['EMC'],sensor11['EMC']];
   		var tdata = [{
       "timestamp": timestamp,
       "input": inputs
   		}];
-  		var myout = myBP.outputObtainedBPNN(tdata);
-  		console.log(myout);
-  		return myout;
+  		myout = myBP.outputObtainedBPNN(tdata);
+  		console.log(JSON.stringify(myout));
   	}
+  	return myout;
   }
 
   function findTimeData(xMouse,Index){
