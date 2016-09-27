@@ -392,7 +392,7 @@
 
         var window_width = $(window).width();
         var width = window_width>974?(window_width*display_par*0.5-22):(window_width*display_par-22);
-        width = width>600?600:width;
+        width = width>650?650:width;
         console.log("chart width is => "+width);
         d3.selectAll('svg').remove();
         for(var i=0;i<display_array.length;i++){
