@@ -540,7 +540,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData,
           var BPValue = findBPNN(click_date.getTime());
           console.log(BPValue);
           if(BPValue[0]['output'][0] != 0){
-          	document.getElementById('BPValue').innerHTML = "Expected EMC: ";
+          	document.getElementById('BPValue').innerHTML = "Predicted EMC: ";
             document.getElementById('BPValue').innerHTML += BPValue[0]['output'][0].toFixed(2);
           }
           if(click_data.length>0){
@@ -604,7 +604,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData,
           console.log(BPValue);
 
           if(BPValue[0]['output'][0] != 0){
-            document.getElementById('BPValue').innerHTML = "Expected EMC: ";
+            document.getElementById('BPValue').innerHTML = "Predicted EMC: ";
             document.getElementById('BPValue').innerHTML += BPValue[0]['output'][0].toFixed(2);
           }
           if(click_data.length>0){
@@ -641,7 +641,7 @@ function CreatePlots(width_original,TempData,index,display_array,ranges,CFGData,
           console.log(BPValue);
 
           if(BPValue[0]['output'][0] != 0){
-            document.getElementById('BPValue').innerHTML = "Expected EMC: ";
+            document.getElementById('BPValue').innerHTML = "Predicted EMC: ";
             document.getElementById('BPValue').innerHTML += BPValue[0]['output'][0].toFixed(2);
           }
           if(click_data.length>0){
