@@ -51,6 +51,11 @@ var TempId = config.getLocal("TempId");
 var syncConfig = config.getLocal("syncConfig",{ syncType: "nqm-iot-http-sync" });
 var syncLib = require(syncConfig.syncType);
 var sync = new syncLib.Sync(syncConfig);
+
+var skipIndex = 800;
+var gTempDutam = [];
+var gEMCDatum = [];
+
 sync.initialise(function(err, reconnect) {
   if (!err) {
     cache.setSyncHandler(sync);
@@ -75,7 +80,7 @@ app.get('/timeseries',function(req,res){
 
   // /*
   // read from local*/
-  
+
   // var TempData = fs.readFileSync(tempDatapath, 'utf8');
   // var HumData = fs.readFileSync(humDatapath,'utf8');
 
@@ -84,14 +89,16 @@ app.get('/timeseries',function(req,res){
   //   HumDatum:JSON.stringify(JSON.parse(HumData).data)
   // });
 
-  var Tempurl = 'https://q.nqminds.com/v1/datasets/Sylsda0Un/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":40000}';
-  var EMCurl = 'https://q.nqminds.com/v1/datasets/BklEbvkv2/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":40000}';
+  var Tempurl = 'https://q.nqminds.com/v1/datasets/Sylsda0Un/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":800}';
+  var EMCurl = 'https://q.nqminds.com/v1/datasets/BklEbvkv2/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":800}';
   var CFGurl = "https://q.nqminds.com/v1/datasets/SJe5yltRn/data";
   RetriveData(Tempurl,function(err,TempData){
     if(!err){
       RetriveData(EMCurl,function(err,EMCData){
         if(!err){
           RetriveData(CFGurl,function(err,CFGData){
+            gTempDatum = TempDatum;
+            gEMCDatum = EMCDatum;
              res.render("timeseries",{
               TempDatum:JSON.stringify(TempData.data),
               EMCDatum:JSON.stringify(EMCData.data),
@@ -104,22 +111,12 @@ app.get('/timeseries',function(req,res){
   })
 });
 app.get('/refresh',function(req,res){
-   /*
-  read from local
-  */
-  // var TempData = fs.readFileSync(tempDatapath, 'utf8');
-  // var HumData = fs.readFileSync(humDatapath,'utf8');
-
-  // res.render("timeseries",{
-  //   TempDatum:JSON.stringify(JSON.parse(TempData).data),
-  //   HumDatum:JSON.stringify(JSON.parse(HumData).data)
-  // });
-  
-  var Tempurl = 'https://q.nqminds.com/v1/datasets/Sylsda0Un/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":20000}';
-  var EMCurl = 'https://q.nqminds.com/v1/datasets/BklEbvkv2/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":20000}';
+  var filter = '{"sort":{"timestamp":-1,"sensorId":1},"limit":1,"skip":skipIndex}';
+  var Tempurl = 'https://q.nqminds.com/v1/datasets/Sylsda0Un/data?opts='+filter;
+  var EMCurl = 'https://q.nqminds.com/v1/datasets/BklEbvkv2/data?opts='+filter;
   RetriveData(Tempurl,function(err,TempData){
     if(!err){
-      RetriveData(Humurl,function(err,HumData){
+      RetriveData(EMCurl,function(err,HumData){
         if(!err){
               res.send({
                 TempDatum:JSON.stringify(TempData.data),
