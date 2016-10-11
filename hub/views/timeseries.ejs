@@ -323,11 +323,11 @@
             url: "/refresh",
             contentType:"application/json; charset=utf-8",
             success: function (d) {
-              console.log(d.TempDatum);
-              // var TEMP = JSON.parse(d.TempDatum);
-              // var HUM = JSON.parse(d.HumDatum);
-              // var whole = gdisplay_par>0.9?true:false;
-              // draw(gAll,TEMP,HUM,whole,gCFGData,myBP);
+              var TEMP = JSON.parse(d.TempDatum);
+              var EMC = JSON.parse(d.EMCDatum);
+              var whole = gdisplay_par>0.9?true:false;
+              console.log(TEMP);
+              draw(gALL,TEMP,EMC,whole,gCFGData,myBP);
             }
           })
         },1000*20)
@@ -363,8 +363,9 @@
         */
         var newData = [];
         var formatDate = d3.time.format("%c");
-        var maxSec = new Date(gTempData[0]['timestamp']);
-        var minSec = new Date(gTempData[gTempData.length-1]['timestamp']);
+        console.log(gTempData[gTempData.length-1]);
+        var minSec = new Date(gTempData[0]['timestamp']);
+        var maxSec = new Date(gTempData[gTempData.length-1]['timestamp']);
         var buckets = d3.time.seconds(minSec,maxSec,20);
         /*
         * get JsonData from

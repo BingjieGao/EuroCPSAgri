@@ -53,7 +53,7 @@ var syncLib = require(syncConfig.syncType);
 var sync = new syncLib.Sync(syncConfig);
 
 var skipIndex = 800;
-var gTempDutam = [];
+var gTempDatum = [];
 var gEMCDatum = [];
 
 sync.initialise(function(err, reconnect) {
@@ -89,16 +89,16 @@ app.get('/timeseries',function(req,res){
   //   HumDatum:JSON.stringify(JSON.parse(HumData).data)
   // });
 
-  var Tempurl = 'https://q.nqminds.com/v1/datasets/Sylsda0Un/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":800}';
-  var EMCurl = 'https://q.nqminds.com/v1/datasets/BklEbvkv2/data?opts={"sort":{"timestamp":-1,"sensorId":1},"limit":800}';
+  var Tempurl = 'https://q.nqminds.com/v1/datasets/Sylsda0Un/data?opts={"sort":{"timestamp":1,"sensorId":1},"limit":800}';
+  var EMCurl = 'https://q.nqminds.com/v1/datasets/BklEbvkv2/data?opts={"sort":{"timestamp":1,"sensorId":1},"limit":800}';
   var CFGurl = "https://q.nqminds.com/v1/datasets/SJe5yltRn/data";
   RetriveData(Tempurl,function(err,TempData){
     if(!err){
       RetriveData(EMCurl,function(err,EMCData){
         if(!err){
           RetriveData(CFGurl,function(err,CFGData){
-            gTempDatum = TempDatum;
-            gEMCDatum = EMCDatum;
+            gTempDatum = gTempDatum.concat(TempData.data);
+            gEMCDatum = gEMCDatum.concat(EMCData.data);
              res.render("timeseries",{
               TempDatum:JSON.stringify(TempData.data),
               EMCDatum:JSON.stringify(EMCData.data),
@@ -111,16 +111,20 @@ app.get('/timeseries',function(req,res){
   })
 });
 app.get('/refresh',function(req,res){
-  var filter = '{"sort":{"timestamp":-1,"sensorId":1},"limit":1,"skip":skipIndex}';
+  var filter = '{"sort":{"timestamp":1,"sensorId":1},"limit":8,"skip":'+skipIndex+'}';
   var Tempurl = 'https://q.nqminds.com/v1/datasets/Sylsda0Un/data?opts='+filter;
   var EMCurl = 'https://q.nqminds.com/v1/datasets/BklEbvkv2/data?opts='+filter;
   RetriveData(Tempurl,function(err,TempData){
     if(!err){
-      RetriveData(EMCurl,function(err,HumData){
+      RetriveData(EMCurl,function(err,EMCData){
         if(!err){
+          console.log(TempData.data);
+              gTempDatum = gTempDatum.concat(TempData.data);
+              gEMCDatum = gEMCDatum.concat(EMCData.data);
+              skipIndex += 8;
               res.send({
-                TempDatum:JSON.stringify(TempData.data),
-                HumDatum:JSON.stringify(HumData.data)
+                TempDatum:JSON.stringify(gTempDatum),
+                EMCDatum:JSON.stringify(gEMCDatum)
             });
         }
       })
