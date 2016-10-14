@@ -317,16 +317,28 @@
 
     $(document).ready(function(){
         draw(gALL,null,null,false,gCFGData,myBP);
+        var TEMP  = null, EMC = null;
         setInterval(function(){
           $.ajax({
             type: "GET",
             url: "/refresh",
             contentType:"application/json; charset=utf-8",
             success: function (d) {
-              var TEMP = JSON.parse(d.TempDatum);
-              var EMC = JSON.parse(d.EMCDatum);
+              TEMP = JSON.parse(d.TempDatum);
+              EMC = JSON.parse(d.EMCDatum);
+              if(EMC.length >=6958){
+                $.ajax({
+                  type:"GET",
+                  url:"/timeseries",
+                  contentType:"applications/json; charset=utf-8",
+                  success: function(d){
+                    TEMP = JSON.parse(d.TempDatum);
+                    EMC = JSON.parse(d.EMCDatum);
+                  }
+                })
+              }
               var whole = gdisplay_par>0.9?true:false;
-              console.log(EMC);
+              // console.log(EMC);
               draw(gALL,TEMP,EMC,whole,gCFGData,myBP);
             }
           })
@@ -372,8 +384,9 @@
         */
         var timestamp_array = [];
         var newTime = gTempData[0]['timestamp'];
+        console.log('tempdat length is => '+gTempData.length);
         for(var i=0;i<gTempData.length;i++){
-            if(gTempData[i+1]!=null){
+            //if(gTempData[i+1]!=null){
               //  if(newTime-gTempData[i]['timestamp']<1000*60){
                     var newObj1 = {};
                     newObj1['timestamp'] = gTempData[i].timestamp;
@@ -394,7 +407,7 @@
                 //         newTime -= 1000*20;
                 //     }
                 // }
-            }
+          //  }
         };
         console.log(timestamp_array);
         // for(var i=0;i<gTempData.length;i++){
@@ -408,7 +421,7 @@
         var window_width = $(window).width();
         var width = window_width>974?(window_width*display_par*0.5-22):(window_width*display_par-22);
         width = width>650?650:width;
-        console.log("chart width is => "+width);
+        console.log("display array is => "+timestamp_array.length);
         d3.selectAll('svg').remove();
         for(var i=0;i<display_array.length;i++){
             CreatePlots(width,timestamp_array,display_array[i],display_array,gRanges,gCFGData,myBP);

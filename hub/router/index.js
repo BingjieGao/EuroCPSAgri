@@ -80,7 +80,7 @@ function getNextTime(callback){
       RetriveData(EMCurl,function(err,EMCData){
         gTimestamp = EMCData.data[EMCData.data.length-1]['timestamp'];
         gEMCDatum = EMCData.data.splice(0,EMCData.data.length-1);
-        //console.log(gEMCDatum.length+' , '+gTempDatum.length);
+        console.log(gEMCDatum.length+' , '+gTempDatum.length);
         callback.send({
           TempDatum:JSON.stringify(gTempDatum),
           EMCDatum:JSON.stringify(gEMCDatum)
