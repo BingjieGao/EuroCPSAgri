@@ -326,11 +326,11 @@
               var TEMP = JSON.parse(d.TempDatum);
               var EMC = JSON.parse(d.EMCDatum);
               var whole = gdisplay_par>0.9?true:false;
-              console.log(TEMP);
+              console.log(EMC);
               draw(gALL,TEMP,EMC,whole,gCFGData,myBP);
             }
           })
-        },1000*20)
+        },1000*5)
     });
     $( window ).resize(function() {
         var width = $(window).width();

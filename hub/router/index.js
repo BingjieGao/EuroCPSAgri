@@ -52,9 +52,10 @@ var syncConfig = config.getLocal("syncConfig",{ syncType: "nqm-iot-http-sync" })
 var syncLib = require(syncConfig.syncType);
 var sync = new syncLib.Sync(syncConfig);
 
-var skipIndex = 800;
+var skipIndex = 2882;
 var gTempDatum = [];
 var gEMCDatum = [];
+var gTimestamp = null;
 
 sync.initialise(function(err, reconnect) {
   if (!err) {
@@ -63,7 +64,31 @@ sync.initialise(function(err, reconnect) {
     console.log("failed to initialise sync: " + err.message);
   }
 });
-
+function getNextTime(callback){
+  var filter = '{"sort":{"timestamp":1,"sensorId":1},"limit":1,"skip":'+skipIndex+'}';
+  var Tempurl = 'https://q.nqminds.com/v1/datasets/Sylsda0Un/data?opts='+filter;
+  RetriveData(Tempurl,function(err,TempData){
+    if(gTimestamp == TempData.data[0]['timestamp']){
+      //console.log(TempData.data);
+      skipIndex += 1;
+      gTempDatum = gTempDatum.concat(TempData.data);
+      getNextTime(callback);
+    }
+    else{
+      filter = '{"sort":{"timestamp":1,"sensorId":1},"limit":'+(skipIndex+1)+'}';
+      var EMCurl = 'https://q.nqminds.com/v1/datasets/BklEbvkv2/data?opts='+filter;
+      RetriveData(EMCurl,function(err,EMCData){
+        gTimestamp = EMCData.data[EMCData.data.length-1]['timestamp'];
+        gEMCDatum = EMCData.data.splice(0,EMCData.data.length-1);
+        //console.log(gEMCDatum.length+' , '+gTempDatum.length);
+        callback.send({
+          TempDatum:JSON.stringify(gTempDatum),
+          EMCDatum:JSON.stringify(gEMCDatum)
+        })
+      })
+    }
+  })
+}
 /*
 * main page should show all the sensor readings
 * in horizontal bar chart with a timeline bar
@@ -89,8 +114,8 @@ app.get('/timeseries',function(req,res){
   //   HumDatum:JSON.stringify(JSON.parse(HumData).data)
   // });
 
-  var Tempurl = 'https://q.nqminds.com/v1/datasets/Sylsda0Un/data?opts={"sort":{"timestamp":1,"sensorId":1},"limit":800}';
-  var EMCurl = 'https://q.nqminds.com/v1/datasets/BklEbvkv2/data?opts={"sort":{"timestamp":1,"sensorId":1},"limit":800}';
+  var Tempurl = 'https://q.nqminds.com/v1/datasets/Sylsda0Un/data?opts={"sort":{"timestamp":1,"sensorId":1},"limit":'+skipIndex+'}';
+  var EMCurl = 'https://q.nqminds.com/v1/datasets/BklEbvkv2/data?opts={"sort":{"timestamp":1,"sensorId":1},"limit":'+skipIndex+'}';
   var CFGurl = "https://q.nqminds.com/v1/datasets/SJe5yltRn/data";
   RetriveData(Tempurl,function(err,TempData){
     if(!err){
@@ -99,6 +124,7 @@ app.get('/timeseries',function(req,res){
           RetriveData(CFGurl,function(err,CFGData){
             gTempDatum = gTempDatum.concat(TempData.data);
             gEMCDatum = gEMCDatum.concat(EMCData.data);
+            gTimestamp = 1472571044088;
              res.render("timeseries",{
               TempDatum:JSON.stringify(TempData.data),
               EMCDatum:JSON.stringify(EMCData.data),
@@ -111,25 +137,26 @@ app.get('/timeseries',function(req,res){
   })
 });
 app.get('/refresh',function(req,res){
-  var filter = '{"sort":{"timestamp":1,"sensorId":1},"limit":8,"skip":'+skipIndex+'}';
-  var Tempurl = 'https://q.nqminds.com/v1/datasets/Sylsda0Un/data?opts='+filter;
-  var EMCurl = 'https://q.nqminds.com/v1/datasets/BklEbvkv2/data?opts='+filter;
-  RetriveData(Tempurl,function(err,TempData){
-    if(!err){
-      RetriveData(EMCurl,function(err,EMCData){
-        if(!err){
-          console.log(TempData.data);
-              gTempDatum = gTempDatum.concat(TempData.data);
-              gEMCDatum = gEMCDatum.concat(EMCData.data);
-              skipIndex += 8;
-              res.send({
-                TempDatum:JSON.stringify(gTempDatum),
-                EMCDatum:JSON.stringify(gEMCDatum)
-            });
-        }
-      })
-    }
-  })
+  // var filter = '{"sort":{"timestamp":1,"sensorId":1},"limit":8,"skip":'+skipIndex+'}';
+  // var Tempurl = 'https://q.nqminds.com/v1/datasets/Sylsda0Un/data?opts='+filter;
+  // var EMCurl = 'https://q.nqminds.com/v1/datasets/BklEbvkv2/data?opts='+filter;
+  // RetriveData(Tempurl,function(err,TempData){
+  //   if(!err){
+  //     RetriveData(EMCurl,function(err,EMCData){
+  //       if(!err){
+  //         console.log(TempData.data);
+  //             gTempDatum = gTempDatum.concat(TempData.data);
+  //             gEMCDatum = gEMCDatum.concat(EMCData.data);
+  //             skipIndex += 8;
+  //             res.send({
+  //               TempDatum:JSON.stringify(gTempDatum),
+  //               EMCDatum:JSON.stringify(gEMCDatum)
+  //           });
+  //       }
+  //     })
+  //   }
+  // })
+  getNextTime(res);
 });
 
 app.post('/moisture',function(req,res){
