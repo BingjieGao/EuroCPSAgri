@@ -326,7 +326,7 @@
             success: function (d) {
               TEMP = JSON.parse(d.TempDatum);
               EMC = JSON.parse(d.EMCDatum);
-              if(EMC.length >=6958){
+              if(EMC.length ==6958){
                 $.ajax({
                   type:"GET",
                   url:"/timeseries",

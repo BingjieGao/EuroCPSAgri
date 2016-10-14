@@ -68,24 +68,26 @@ function getNextTime(callback){
   var filter = '{"sort":{"timestamp":1,"sensorId":1},"limit":1,"skip":'+skipIndex+'}';
   var Tempurl = 'https://q.nqminds.com/v1/datasets/Sylsda0Un/data?opts='+filter;
   RetriveData(Tempurl,function(err,TempData){
-    if(gTimestamp == TempData.data[0]['timestamp']){
-      //console.log(TempData.data);
-      skipIndex += 1;
-      gTempDatum = gTempDatum.concat(TempData.data);
-      getNextTime(callback);
-    }
-    else{
-      filter = '{"sort":{"timestamp":1,"sensorId":1},"limit":'+(skipIndex+1)+'}';
-      var EMCurl = 'https://q.nqminds.com/v1/datasets/BklEbvkv2/data?opts='+filter;
-      RetriveData(EMCurl,function(err,EMCData){
-        gTimestamp = EMCData.data[EMCData.data.length-1]['timestamp'];
-        gEMCDatum = EMCData.data.splice(0,EMCData.data.length-1);
-        console.log(gEMCDatum.length+' , '+gTempDatum.length);
-        callback.send({
-          TempDatum:JSON.stringify(gTempDatum),
-          EMCDatum:JSON.stringify(gEMCDatum)
+      if(TempData.data != null || TempData.data != undefined){
+      if(gTimestamp == TempData.data[0]['timestamp']){
+        //console.log(TempData.data);
+        skipIndex += 1;
+        gTempDatum = gTempDatum.concat(TempData.data);
+        getNextTime(callback);
+      }
+      else{
+        filter = '{"sort":{"timestamp":1,"sensorId":1},"limit":'+(skipIndex+1)+'}';
+        var EMCurl = 'https://q.nqminds.com/v1/datasets/BklEbvkv2/data?opts='+filter;
+        RetriveData(EMCurl,function(err,EMCData){
+          gTimestamp = EMCData.data[EMCData.data.length-1]['timestamp'];
+          gEMCDatum = EMCData.data.splice(0,EMCData.data.length-1);
+          console.log(gEMCDatum.length+' , '+gTempDatum.length);
+          callback.send({
+            TempDatum:JSON.stringify(gTempDatum),
+            EMCDatum:JSON.stringify(gEMCDatum)
+          })
         })
-      })
+      }
     }
   })
 }
@@ -95,6 +97,10 @@ function getNextTime(callback){
 */
 app.get('/',function(req,res){
 	var TempData = fs.readFileSync(tempDatapath, 'utf8');
+  gTempDatum = [];
+  gEMCDatum = [];
+  gTimestamp = null;
+  skipIndex = 2882;
 	console.log("read file is  "+JSON.parse(TempData).TempData);
 	res.render('index',{TempDatum:JSON.stringify(JSON.parse(TempData).TempData),HumDatum:JSON.stringify(HumData.HumData)});
 	res.send(JSON.stringify(JSON.parse(TempData).TempData));
