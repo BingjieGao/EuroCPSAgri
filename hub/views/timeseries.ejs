@@ -299,6 +299,7 @@
     var gTempData = <%-TempDatum%>
     var gEMCData = <%-EMCDatum%>
     var gCFGData = <%-CFGDatum%>
+    var gLength = 0;
     //console.log(gCFGData);
     var GDrayerNN = document.createElement("script");
 
@@ -326,19 +327,18 @@
             success: function (d) {
               TEMP = JSON.parse(d.TempDatum);
               EMC = JSON.parse(d.EMCDatum);
-              if(EMC.length ==6958){
-                $.ajax({
-                  type:"GET",
-                  url:"/timeseries",
-                  contentType:"applications/json; charset=utf-8",
-                  success: function(d){
-                    TEMP = JSON.parse(d.TempDatum);
-                    EMC = JSON.parse(d.EMCDatum);
-                  }
-                })
-              }
+              // if(EMC.length >6950){
+              //   $.ajax({
+              //     type:"GET",
+              //     url:"/timeseries",
+              //     contentType:"applications/json; charset=utf-8",
+              //     success: function(d){
+              //       TEMP = JSON.parse(d.TempDatum);
+              //       EMC = JSON.parse(d.EMCDatum);
+              //     }
+              //   })
+              // }
               var whole = gdisplay_par>0.9?true:false;
-              // console.log(EMC);
               draw(gALL,TEMP,EMC,whole,gCFGData,myBP);
             }
           })
