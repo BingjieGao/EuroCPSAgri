@@ -346,8 +346,8 @@ function RetriveData(URL,cb){
           //console.log("Got a response: ", fbResponse["data"]);
           cb(null,fbResponse);
       });
-  }).on('error', function(e){
-        console.log("Got an error: ", e);
+  }).on('error', function(err){
+        console.log("Got an error: ", err);
         cb(err,null);
   });
 }
