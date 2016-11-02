@@ -70,7 +70,7 @@ function getNextTime(callback){
   RetriveData(Tempurl,function(err,TempData){
       //console.log(TempData.data);
       if((skipIndex <= 6957) && gTimestamp == TempData.data[0]['timestamp']){
-        //console.log(TempData.data);
+        console.log(TempData.data);
         skipIndex += 1;
         gTempDatum = gTempDatum.concat(TempData.data);
         getNextTime(callback);
@@ -82,7 +82,7 @@ function getNextTime(callback){
         RetriveData(EMCurl,function(err,EMCData){
           gTimestamp = EMCData.data[EMCData.data.length-1]['timestamp'];
           gEMCDatum = EMCData.data.splice(0,EMCData.data.length-1);
-          //console.log(gEMCDatum.length+' , '+gTempDatum.length);
+          console.log(gEMCDatum.length+' , '+gTempDatum.length);
           callback.send({
             TempDatum:JSON.stringify(gTempDatum),
             EMCDatum:JSON.stringify(gEMCDatum)
